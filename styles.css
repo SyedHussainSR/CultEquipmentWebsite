@@ -78,7 +78,7 @@ select {
 
 .brand img,
 .site-footer img {
-  width: 176px;
+  width: 320px;
   height: auto;
 }
 
@@ -968,7 +968,7 @@ select:focus {
   }
 
   .brand img {
-    width: 144px;
+    width: 220px;
   }
 
   .nav-cta {
