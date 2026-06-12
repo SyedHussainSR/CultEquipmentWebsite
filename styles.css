@@ -145,18 +145,13 @@ select {
 
 .hero-video-overlay {
   background:
-    linear-gradient(90deg, rgba(8, 10, 13, 0.66) 0%, rgba(8, 10, 13, 0.34) 42%, rgba(8, 10, 13, 0.52) 100%),
-    linear-gradient(180deg, rgba(4, 6, 8, 0.18) 0%, rgba(4, 6, 8, 0.48) 100%);
+    linear-gradient(90deg, rgba(8, 10, 13, 0.48) 0%, rgba(8, 10, 13, 0.16) 42%, rgba(8, 10, 13, 0.28) 100%),
+    linear-gradient(180deg, rgba(4, 6, 8, 0.08) 0%, rgba(4, 6, 8, 0.22) 100%);
   pointer-events: none;
 }
 
 .hero-grid {
-  background-image:
-    linear-gradient(rgba(218, 231, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(218, 231, 255, 0.05) 1px, transparent 1px);
-  background-size: 84px 84px;
-  z-index: 1;
-  pointer-events: none;
+  display: none;
 }
 
 .hero-glow-a {
@@ -219,14 +214,7 @@ select {
   left: 0;
   bottom: 148px;
   max-width: 360px;
-  padding: 26px 26px 24px;
-  border: 1px solid rgba(244, 247, 251, 0.12);
-  border-radius: 30px;
-  background:
-    linear-gradient(180deg, rgba(7, 9, 11, 0.42), rgba(7, 9, 11, 0.66)),
-    rgba(10, 13, 16, 0.24);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
-  backdrop-filter: blur(18px);
+  padding: 0;
 }
 
 .hero-copy::before {
@@ -875,6 +863,33 @@ select:focus {
   display: none;
 }
 
+.whatsapp-float {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  color: #fff;
+  background: #25d366;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.whatsapp-float:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.4);
+}
+
+.whatsapp-float svg {
+  width: 30px;
+  height: 30px;
+}
+
 @media (max-width: 1240px) {
   .hero-copy {
     left: 0;
@@ -1029,8 +1044,6 @@ select:focus {
   .hero-copy {
     bottom: 136px;
     max-width: 272px;
-    padding: 20px 18px 18px;
-    border-radius: 24px;
   }
 
   .hero-kicker {
@@ -1120,5 +1133,17 @@ select:focus {
     font-size: 0.84rem;
     font-weight: 800;
     text-transform: uppercase;
+  }
+
+  .whatsapp-float {
+    right: 16px;
+    bottom: 82px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .whatsapp-float svg {
+    width: 28px;
+    height: 28px;
   }
 }
