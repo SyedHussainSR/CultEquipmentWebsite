@@ -6,6 +6,7 @@
   const switchChips = document.querySelectorAll(".switch-chip");
   const revealTargets = document.querySelectorAll(".reveal");
   const ownerVideos = document.querySelectorAll(".owner-video video");
+  const posterCache = new Map();
   const params = new URLSearchParams(window.location.search);
   const trackedParams = [
     "utm_source",
@@ -34,16 +35,116 @@
     });
   }
 
-  function switchHeroVideo(button) {
+  function generatePosterFromVideo(src) {
+    if (!src) return Promise.resolve("");
+    if (posterCache.has(src)) return posterCache.get(src);
+
+    const posterPromise = new Promise((resolve) => {
+      const preview = document.createElement("video");
+      let settled = false;
+
+      function finish(value) {
+        if (settled) return;
+        settled = true;
+        preview.pause();
+        preview.removeAttribute("src");
+        preview.load();
+        resolve(value || "");
+      }
+
+      function captureFrame() {
+        try {
+          const canvas = document.createElement("canvas");
+          const width = preview.videoWidth || 1280;
+          const height = preview.videoHeight || 720;
+          canvas.width = width;
+          canvas.height = height;
+          const context = canvas.getContext("2d");
+          if (!context) {
+            finish("");
+            return;
+          }
+
+          context.drawImage(preview, 0, 0, width, height);
+          finish(canvas.toDataURL("image/jpeg", 0.82));
+        } catch {
+          finish("");
+        }
+      }
+
+      preview.muted = true;
+      preview.playsInline = true;
+      preview.preload = "auto";
+      preview.src = src;
+
+      preview.addEventListener(
+        "loadeddata",
+        () => {
+          const frameTime = Number.isFinite(preview.duration) && preview.duration > 0.12 ? 0.12 : 0;
+          if (frameTime > 0) {
+            preview.addEventListener(
+              "seeked",
+              () => {
+                captureFrame();
+              },
+              { once: true }
+            );
+
+            try {
+              preview.currentTime = frameTime;
+            } catch {
+              captureFrame();
+            }
+          } else {
+            captureFrame();
+          }
+        },
+        { once: true }
+      );
+
+      preview.addEventListener(
+        "error",
+        () => {
+          finish("");
+        },
+        { once: true }
+      );
+    });
+
+    posterCache.set(src, posterPromise);
+    return posterPromise;
+  }
+
+  async function ensurePosterForButton(button) {
+    if (!button) return "";
+    if (button.dataset.heroVideoPoster) return button.dataset.heroVideoPoster;
+    const poster = await generatePosterFromVideo(button.dataset.heroVideoTarget);
+    if (poster) button.dataset.heroVideoPoster = poster;
+    return poster;
+  }
+
+  async function hydrateHeroPosters() {
+    const posterResults = await Promise.all(
+      Array.from(switchChips).map(async (chip) => {
+        const poster = await ensurePosterForButton(chip);
+        return { chip, poster };
+      })
+    );
+
+    const activePoster = posterResults.find(({ chip }) => chip.classList.contains("is-active"))?.poster;
+    if (heroVideo && activePoster) heroVideo.poster = activePoster;
+  }
+
+  async function switchHeroVideo(button) {
     if (!button || !heroVideo || !heroSource) return;
     const src = button.dataset.heroVideoTarget;
-    const poster = button.dataset.heroVideoPoster || "";
-    if (!src || heroSource.src === src) return;
+    const poster = await ensurePosterForButton(button);
+    if (!src || heroSource.getAttribute("src") === src) return;
 
     switchChips.forEach((chip) => chip.classList.toggle("is-active", chip === button));
     heroVideo.pause();
     heroSource.src = src;
-    heroVideo.poster = poster;
+    heroVideo.poster = poster || "";
     heroVideo.load();
     heroVideo.play().catch(() => {});
   }
@@ -177,6 +278,7 @@
   switchChips.forEach((chip) => {
     chip.addEventListener("click", () => switchHeroVideo(chip));
   });
+  hydrateHeroPosters();
   fillTrackingFields();
   propagateUtms();
   setHeaderState();
