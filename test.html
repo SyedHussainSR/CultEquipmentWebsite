@@ -35,52 +35,64 @@
       <main class="test-page-main">
         <div class="test-page-shell">
           <section class="test-hero-card">
-            <div class="test-hero-grid">
-              <div class="test-hero-copy">
-                <p class="catalog-type">PDF-Led Catalog Preview</p>
-                <h1>Test catalogue built from the new source files.</h1>
-                <p>
-                  This page pulls series names, equipment families, product headlines, and source visuals from the
-                  provided PDFs so we can compare a cleaner structure before replacing the current catalogue.
-                </p>
-                <div class="test-hero-actions">
-                  <a class="button primary" href="index.html#lead-form-wrap">Continue to Quote Form</a>
-                  <a class="button ghost" href="catalog.html">Back to Current Catalog</a>
-                </div>
-              </div>
-              <div class="test-source-list">
-                <article class="test-source-card">
-                  <p>Source 01</p>
-                  <h3>Commercial Catalog 2025</h3>
-                  <p>Used for cardio, strength families, racks, benches, and accessory lineup.</p>
-                </article>
-                <article class="test-source-card">
-                  <p>Source 02</p>
-                  <h3>Fusion Series</h3>
-                  <p>Used for Fusion-specific product visuals, highlights, and machine names.</p>
-                </article>
+            <div class="test-hero-copy">
+              <p class="catalog-type">Test Catalogue Preview</p>
+              <h1>Cleaner filters. Less crowding. Better equipment browsing.</h1>
+              <p>
+                Use the dropdowns below to view only the relevant catalog family. Every card uses PDF-led titles and
+                source visuals, and the equipment image panels now sit on white backgrounds for better clarity.
+              </p>
+              <div class="test-hero-actions">
+                <a class="button primary" href="index.html#lead-form-wrap">Continue to Quote Form</a>
+                <a class="button ghost" href="catalog.html">Back to Current Catalog</a>
               </div>
             </div>
           </section>
 
-          <nav class="test-jumpbar" aria-label="Test catalogue sections">
-            <a class="test-chip" href="#fusion-series">Fusion Series</a>
-            <a class="test-chip" href="#cardio-range">Cardio</a>
-            <a class="test-chip" href="#strength-series">Strength Series</a>
-            <a class="test-chip" href="#racks-benches">Racks + Benches</a>
-            <a class="test-chip" href="#featured-machines">Individual Equipment</a>
-            <a class="test-chip" href="#free-weights">Free Weights</a>
-          </nav>
+          <section class="test-filter-shell">
+            <div class="test-filter-row" aria-label="Catalogue filters">
+              <details class="test-filter-dropdown">
+                <summary>Cardio</summary>
+                <div class="test-filter-menu">
+                  <button type="button" data-filter-group="cardio" data-filter-value="">All Cardio</button>
+                  <button type="button" data-filter-group="cardio" data-filter-value="treadmills">Treadmills</button>
+                  <button type="button" data-filter-group="cardio" data-filter-value="ellipticals">Ellipticals</button>
+                  <button type="button" data-filter-group="cardio" data-filter-value="bikes">Bikes</button>
+                  <button type="button" data-filter-group="cardio" data-filter-value="high-intensity">High Intensity</button>
+                </div>
+              </details>
 
-          <div class="test-sections" id="test-series-root"></div>
+              <details class="test-filter-dropdown">
+                <summary>Strength</summary>
+                <div class="test-filter-menu">
+                  <button type="button" data-filter-group="strength" data-filter-value="">All Strength</button>
+                  <button type="button" data-filter-group="strength" data-filter-value="cable-motion-racks">Cable Motion + Racks</button>
+                  <button type="button" data-filter-group="strength" data-filter-value="benches-racks">Benches + Racks</button>
+                  <button type="button" data-filter-group="strength" data-filter-value="free-weights-accessories">Free Weights + Accessories</button>
+                </div>
+              </details>
 
-          <section class="test-bottom-cta">
-            <div>
-              <p class="catalog-type">Next Step</p>
-              <h3>Review this structure first, then we can replace the current catalogue page fully.</h3>
-              <p>The lead form flow stays on the homepage, and this page can be promoted to the main catalog after approval.</p>
+              <details class="test-filter-dropdown">
+                <summary>Series</summary>
+                <div class="test-filter-menu">
+                  <button type="button" data-filter-group="series" data-filter-value="">All Series</button>
+                  <button type="button" data-filter-group="series" data-filter-value="fusion-series">Fusion Series</button>
+                  <button type="button" data-filter-group="series" data-filter-value="flow-series">Flow Series</button>
+                  <button type="button" data-filter-group="series" data-filter-value="flux-series">Flux Series</button>
+                  <button type="button" data-filter-group="series" data-filter-value="fuel-series">Fuel Series</button>
+                  <button type="button" data-filter-group="series" data-filter-value="force-series">Force Series</button>
+                </div>
+              </details>
             </div>
-            <a class="button primary" href="index.html#lead-form-wrap">Open Quote Form</a>
+
+            <div class="test-filter-meta">
+              <p id="test-results-label">Showing all catalogue items</p>
+              <button class="button ghost" id="test-clear-filters" type="button" hidden>Clear Filters</button>
+            </div>
+          </section>
+
+          <section class="test-results-shell">
+            <div class="test-results-grid" id="test-results"></div>
           </section>
         </div>
       </main>
