@@ -6,7 +6,20 @@
   const switchChips = document.querySelectorAll(".switch-chip");
   const revealTargets = document.querySelectorAll(".reveal");
   const ownerVideos = document.querySelectorAll(".owner-video video");
+  const catalogFilterButtons = document.querySelectorAll("[data-catalog-filter]");
+  const catalogCards = document.querySelectorAll("[data-catalog-category]");
+  const catalogAddButtons = document.querySelectorAll(".catalog-add");
+  const quoteTray = document.querySelector("#quote-tray");
+  const quoteCount = document.querySelector("#quote-count");
+  const quoteDrawer = document.querySelector("#quote-drawer");
+  const quoteList = document.querySelector("#quote-list");
+  const quoteReviewButton = document.querySelector("#quote-review");
+  const quoteCloseButton = document.querySelector("#quote-close");
+  const quoteScrollForm = document.querySelector("#quote-scroll-form");
+  const selectedProductsInput = document.querySelector("#selected-products");
   const posterCache = new Map();
+  const quoteItems = [];
+  const quoteStorageKey = "cult-equipment-quote-items";
   const params = new URLSearchParams(window.location.search);
   const trackedParams = [
     "utm_source",
@@ -208,6 +221,141 @@
     return payload;
   }
 
+  function syncSelectedProductsField() {
+    if (!selectedProductsInput) return;
+    selectedProductsInput.value = quoteItems
+      .map((item) => `${item.name} x${item.qty}${item.meta ? ` (${item.meta})` : ""}`)
+      .join(" | ");
+  }
+
+  function saveQuoteItems() {
+    try {
+      window.localStorage.setItem(quoteStorageKey, JSON.stringify(quoteItems));
+    } catch {
+      return;
+    }
+  }
+
+  function loadQuoteItems() {
+    try {
+      const raw = window.localStorage.getItem(quoteStorageKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return;
+      parsed.forEach((item) => {
+        if (!item || typeof item.name !== "string") return;
+        quoteItems.push({
+          name: item.name,
+          meta: typeof item.meta === "string" ? item.meta : "",
+          qty: Number.isFinite(item.qty) && item.qty > 0 ? Math.min(20, item.qty) : 1
+        });
+      });
+    } catch {
+      return;
+    }
+  }
+
+  function clearQuoteItems() {
+    quoteItems.splice(0, quoteItems.length);
+    try {
+      window.localStorage.removeItem(quoteStorageKey);
+    } catch {
+      return;
+    }
+  }
+
+  function updateQuoteUi() {
+    const total = quoteItems.reduce((sum, item) => sum + item.qty, 0);
+    if (quoteCount) {
+      quoteCount.textContent = `${total} ${total === 1 ? "item" : "items"} selected`;
+    }
+
+    if (quoteTray) {
+      quoteTray.hidden = total === 0;
+    }
+
+    if (!quoteList) {
+      syncSelectedProductsField();
+      saveQuoteItems();
+      return;
+    }
+
+    if (total === 0) {
+      quoteList.innerHTML = `<p class="quote-empty">No products added yet.</p>`;
+      syncSelectedProductsField();
+      saveQuoteItems();
+      return;
+    }
+
+    quoteList.innerHTML = quoteItems
+      .map(
+        (item, index) => `
+          <div class="quote-item">
+            <div class="quote-item-copy">
+              <strong>${item.name}</strong>
+              <span>${item.meta}</span>
+            </div>
+            <div class="quote-item-controls">
+              <button class="quote-step" type="button" data-quote-adjust="${index}" data-quote-delta="-1">-</button>
+              <span class="quote-qty">${item.qty}</span>
+              <button class="quote-step" type="button" data-quote-adjust="${index}" data-quote-delta="1">+</button>
+              <button class="quote-remove" type="button" data-quote-remove="${index}">x</button>
+            </div>
+          </div>
+        `
+      )
+      .join("");
+
+    syncSelectedProductsField();
+    saveQuoteItems();
+  }
+
+  function setCatalogFilter(filter) {
+    catalogFilterButtons.forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.catalogFilter === filter);
+    });
+
+    catalogCards.forEach((card) => {
+      const matches = filter === "all" || card.dataset.catalogCategory === filter;
+      card.classList.toggle("is-hidden", !matches);
+    });
+  }
+
+  function addQuoteItem(name, meta) {
+    const existing = quoteItems.find((item) => item.name === name);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      quoteItems.push({ name, meta, qty: 1 });
+    }
+    updateQuoteUi();
+  }
+
+  function adjustQuoteItem(index, delta) {
+    const item = quoteItems[index];
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) {
+      quoteItems.splice(index, 1);
+    }
+    updateQuoteUi();
+  }
+
+  function removeQuoteItem(index) {
+    quoteItems.splice(index, 1);
+    updateQuoteUi();
+  }
+
+  function openQuoteDrawer() {
+    quoteDrawer?.classList.add("is-open");
+    quoteDrawer?.setAttribute("aria-hidden", "false");
+  }
+
+  function closeQuoteDrawer() {
+    quoteDrawer?.classList.remove("is-open");
+    quoteDrawer?.setAttribute("aria-hidden", "true");
+  }
+
   async function postLead(payload, endpoint) {
     const encoded = new URLSearchParams(payload);
     await fetch(endpoint, {
@@ -260,6 +408,9 @@
       if (typeof window.gtag_report_conversion === "function") window.gtag_report_conversion();
 
       form.reset();
+      clearQuoteItems();
+      updateQuoteUi();
+      closeQuoteDrawer();
       fillTrackingFields();
       setStatus(endpoint ? "Thanks. The team will call you shortly." : "Thanks. Form is ready; add the Zapier webhook URL before going live.", "success");
     } catch (error) {
@@ -267,7 +418,7 @@
       setStatus("Something went wrong. Please try again in a moment.", "error");
     } finally {
       submit.disabled = false;
-      submit.textContent = "Get a call back";
+      submit.textContent = "Submit";
     }
   }
 
@@ -278,9 +429,41 @@
   switchChips.forEach((chip) => {
     chip.addEventListener("click", () => switchHeroVideo(chip));
   });
+  catalogFilterButtons.forEach((button) => {
+    button.addEventListener("click", () => setCatalogFilter(button.dataset.catalogFilter || "all"));
+  });
+  catalogAddButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      addQuoteItem(button.dataset.productName || "Equipment", button.dataset.productMeta || "");
+      openQuoteDrawer();
+    });
+  });
+  quoteReviewButton?.addEventListener("click", openQuoteDrawer);
+  quoteCloseButton?.addEventListener("click", closeQuoteDrawer);
+  quoteDrawer?.addEventListener("click", (event) => {
+    if (event.target === quoteDrawer) closeQuoteDrawer();
+  });
+  quoteList?.addEventListener("click", (event) => {
+    const adjustButton = event.target.closest("[data-quote-adjust]");
+    if (adjustButton) {
+      adjustQuoteItem(Number(adjustButton.dataset.quoteAdjust), Number(adjustButton.dataset.quoteDelta));
+      return;
+    }
+
+    const removeButton = event.target.closest("[data-quote-remove]");
+    if (removeButton) {
+      removeQuoteItem(Number(removeButton.dataset.quoteRemove));
+    }
+  });
+  quoteScrollForm?.addEventListener("click", () => {
+    closeQuoteDrawer();
+  });
+  loadQuoteItems();
   hydrateHeroPosters();
   fillTrackingFields();
   propagateUtms();
+  setCatalogFilter("all");
+  updateQuoteUi();
   setHeaderState();
   revealOnScroll();
   playVisibleOwnerVideos();
