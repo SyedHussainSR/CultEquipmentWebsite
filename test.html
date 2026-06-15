@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>cult equipment Catalog | Commercial Gym Equipment</title>
+    <title>cult equipment Test | PDF-led Catalog Preview</title>
     <meta
       name="description"
-      content="Browse the cult equipment commercial catalog with cardio, strength, and free-weight equipment. Add machines to your quote list and continue to the main lead form."
+      content="Preview a cleaner commercial equipment catalog built from the Commercial Catalog 2025 and Fusion Series PDFs."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,7 +16,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="catalog-page">
+  <body class="catalog-page test-page">
     <div class="page-shell">
       <header class="site-header is-scrolled">
         <a class="brand" href="index.html" aria-label="cult equipment">
@@ -32,56 +32,58 @@
         <a class="nav-cta" href="index.html#lead-form-wrap">Request a call</a>
       </header>
 
-      <main class="catalog-page-main">
-        <div class="catalog-page-shell">
-          <section class="catalog-section">
-            <div class="catalog-grid-head">
-              <div>
-                <h1>Catalogue</h1>
+      <main class="test-page-main">
+        <div class="test-page-shell">
+          <section class="test-hero-card">
+            <div class="test-hero-grid">
+              <div class="test-hero-copy">
+                <p class="catalog-type">PDF-Led Catalog Preview</p>
+                <h1>Test catalogue built from the new source files.</h1>
+                <p>
+                  This page pulls series names, equipment families, product headlines, and source visuals from the
+                  provided PDFs so we can compare a cleaner structure before replacing the current catalogue.
+                </p>
+                <div class="test-hero-actions">
+                  <a class="button primary" href="index.html#lead-form-wrap">Continue to Quote Form</a>
+                  <a class="button ghost" href="catalog.html">Back to Current Catalog</a>
+                </div>
               </div>
-              <div class="catalog-count" id="catalog-count">Showing 0 products</div>
+              <div class="test-source-list">
+                <article class="test-source-card">
+                  <p>Source 01</p>
+                  <h3>Commercial Catalog 2025</h3>
+                  <p>Used for cardio, strength families, racks, benches, and accessory lineup.</p>
+                </article>
+                <article class="test-source-card">
+                  <p>Source 02</p>
+                  <h3>Fusion Series</h3>
+                  <p>Used for Fusion-specific product visuals, highlights, and machine names.</p>
+                </article>
+              </div>
             </div>
+          </section>
 
-            <div class="catalog-toolbar" aria-label="Catalog categories">
-              <button class="catalog-pill is-active" type="button" data-catalog-filter="all">All</button>
-              <button class="catalog-pill" type="button" data-catalog-filter="cardio">Cardio</button>
-              <button class="catalog-pill" type="button" data-catalog-filter="strength">Strength</button>
-              <button class="catalog-pill" type="button" data-catalog-filter="plate">Plate Loaded</button>
+          <nav class="test-jumpbar" aria-label="Test catalogue sections">
+            <a class="test-chip" href="#fusion-series">Fusion Series</a>
+            <a class="test-chip" href="#cardio-range">Cardio</a>
+            <a class="test-chip" href="#strength-series">Strength Series</a>
+            <a class="test-chip" href="#racks-benches">Racks + Benches</a>
+            <a class="test-chip" href="#featured-machines">Individual Equipment</a>
+            <a class="test-chip" href="#free-weights">Free Weights</a>
+          </nav>
+
+          <div class="test-sections" id="test-series-root"></div>
+
+          <section class="test-bottom-cta">
+            <div>
+              <p class="catalog-type">Next Step</p>
+              <h3>Review this structure first, then we can replace the current catalogue page fully.</h3>
+              <p>The lead form flow stays on the homepage, and this page can be promoted to the main catalog after approval.</p>
             </div>
-
-            <div class="catalog-grid" id="catalog-grid"></div>
+            <a class="button primary" href="index.html#lead-form-wrap">Open Quote Form</a>
           </section>
         </div>
       </main>
-
-      <div class="quote-tray" id="quote-tray" hidden>
-        <div class="quote-tray-copy">
-          <strong id="quote-count">0 items selected</strong>
-          <span>Your selected equipment will carry to the main quote form.</span>
-        </div>
-        <div class="quote-tray-actions">
-          <button class="button ghost" type="button" id="quote-review">Review Quote</button>
-          <a class="button primary" href="index.html#lead-form-wrap">Continue to Quote Form</a>
-        </div>
-      </div>
-
-      <aside class="quote-drawer" id="quote-drawer" aria-hidden="true">
-        <div class="quote-drawer-card">
-          <div class="quote-drawer-head">
-            <div>
-              <p class="catalog-type">Quote List</p>
-              <h3>Selected equipment</h3>
-            </div>
-            <button class="quote-close" type="button" id="quote-close" aria-label="Close quote drawer">x</button>
-          </div>
-          <div class="quote-list" id="quote-list">
-            <p class="quote-empty">No products added yet.</p>
-          </div>
-          <div class="quote-drawer-actions">
-            <a class="button primary" href="index.html#lead-form-wrap">Continue to Quote Form</a>
-          </div>
-        </div>
-      </aside>
 
       <footer class="site-footer">
         <img src="assets/cult-equipment-logo.png" alt="cult equipment" />
@@ -107,6 +109,6 @@
       </svg>
     </a>
 
-    <script src="catalog.js"></script>
+    <script src="test.js"></script>
   </body>
 </html>
