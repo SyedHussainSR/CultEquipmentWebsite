@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260616-6" />
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -59,11 +59,16 @@
             alt="cult equipment"
           />
         </a>
-        <nav class="nav-links" aria-label="Primary navigation">
-          <a href="#collections">Collections</a>
-          <a href="#packages">Packages</a>
-          <a href="#owners">Projects</a>
-          <a href="catalog.html">Catalog</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation" data-nav-toggle aria-label="Open navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="nav-links" id="site-navigation" aria-label="Primary navigation" data-nav-menu>
+          <a class="nav-link nav-link-collections" href="#collections">Collections</a>
+          <a class="nav-link nav-link-packages" href="#packages">Packages</a>
+          <a class="nav-link nav-link-projects" href="#owners">Projects</a>
+          <a class="nav-link nav-link-catalog" href="catalog.html">Catalog</a>
         </nav>
         <a class="nav-cta" href="#lead-form-wrap">Request a call</a>
       </header>
@@ -373,6 +378,6 @@
       </svg>
     </a>
     <a class="mobile-sticky-cta" href="#lead-form-wrap">Request commercial call</a>
-    <script src="script.js?v=20260616-4"></script>
+    <script src="script.js?v=20260616-6"></script>
   </body>
 </html>

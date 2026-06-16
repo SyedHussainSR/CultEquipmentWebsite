@@ -1,6 +1,8 @@
 (function () {
   const form = document.querySelector("#lead-form");
   const header = document.querySelector("[data-header]");
+  const navToggle = document.querySelector("[data-nav-toggle]");
+  const navMenu = document.querySelector("[data-nav-menu]");
   const heroVideo = document.querySelector(".hero-video");
   const heroSource = heroVideo?.querySelector("source");
   const switchChips = document.querySelectorAll(".switch-chip");
@@ -37,6 +39,17 @@
 
   function setHeaderState() {
     header?.classList.toggle("is-scrolled", window.scrollY > 12);
+  }
+
+  function closeNavMenu() {
+    header?.classList.remove("is-nav-open");
+    navToggle?.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleNavMenu() {
+    if (!header || !navToggle) return;
+    const isOpen = header.classList.toggle("is-nav-open");
+    navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
   function playVisibleOwnerVideos() {
@@ -243,6 +256,28 @@
     ].join("\n");
   }
 
+  function buildSubmittedLeadWhatsappMessage(payload, selectedItems) {
+    const lines = [
+      "Hey, I have submitted the commercial equipment form.",
+      "",
+      `Name: ${payload.name || "-"}`,
+      `Phone: ${payload.Phone || "-"}`,
+      `City: ${payload.City || "-"}`,
+      `Timeline: ${payload["Gym-Opening-Timeline"] || "-"}`,
+      `Gym Setup Budget: ${payload["Gym-Opening-Budget"] || "-"}`,
+      `Requirement: ${payload["Lead-Intent"] || "-"}`
+    ];
+
+    if (selectedItems.length) {
+      lines.push("", "Selected equipment:");
+      selectedItems.forEach((item) => {
+        lines.push(`- ${item.name} x${item.qty}`);
+      });
+    }
+
+    return lines.join("\n");
+  }
+
   function updateWhatsappLink() {
     if (!whatsappFloat) return;
     whatsappFloat.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildWhatsappMessage())}`;
@@ -414,11 +449,24 @@
 
     phone.value = normalizeIndianPhone(phone.value);
     const payload = getPayload(form);
+    const quoteSnapshot = quoteItems.map((item) => ({
+      name: item.name,
+      meta: item.meta,
+      qty: item.qty
+    }));
     const endpoint = window.CULTSPORT_LEAD_ENDPOINT || form.dataset.endpoint || "";
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildSubmittedLeadWhatsappMessage(payload, quoteSnapshot))}`;
+    let whatsappWindow = null;
 
     submit.disabled = true;
     submit.textContent = "Sending...";
     setStatus("Sending your request to the team.", "");
+
+    try {
+      whatsappWindow = window.open("", "_blank", "noopener");
+    } catch {
+      whatsappWindow = null;
+    }
 
     try {
       if (endpoint) {
@@ -430,13 +478,22 @@
       window.dataLayer?.push({ event: "lead_form_submit", leadIntent: payload["Lead-Intent"], budget: payload["Gym-Opening-Budget"] });
       if (typeof window.gtag_report_conversion === "function") window.gtag_report_conversion();
 
+      if (whatsappWindow) {
+        whatsappWindow.location.replace(whatsappUrl);
+      } else {
+        window.open(whatsappUrl, "_blank", "noopener");
+      }
+
       form.reset();
       clearQuoteItems();
       updateQuoteUi();
       closeQuoteDrawer();
       fillTrackingFields();
-      setStatus(endpoint ? "Thanks. The team will call you shortly." : "Thanks. Form is ready; add the Zapier webhook URL before going live.", "success");
+      setStatus(endpoint ? "Thanks. The team will call you shortly. WhatsApp is opening with your equipment list." : "Thanks. Form is ready; WhatsApp is opening with your equipment list.", "success");
     } catch (error) {
+      if (whatsappWindow && !whatsappWindow.closed) {
+        whatsappWindow.close();
+      }
       console.error(error);
       setStatus("Something went wrong. Please try again in a moment.", "error");
     } finally {
@@ -448,6 +505,16 @@
   window.addEventListener("scroll", setHeaderState, { passive: true });
   window.addEventListener("scroll", playVisibleOwnerVideos, { passive: true });
   window.addEventListener("scroll", revealOnScroll, { passive: true });
+  navToggle?.addEventListener("click", toggleNavMenu);
+  navMenu?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeNavMenu);
+  });
+  document.addEventListener("click", (event) => {
+    if (!header?.contains(event.target)) closeNavMenu();
+  });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 720) closeNavMenu();
+  });
   form?.addEventListener("submit", handleSubmit);
   switchChips.forEach((chip) => {
     chip.addEventListener("click", () => switchHeroVideo(chip));

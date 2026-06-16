@@ -1,4 +1,7 @@
 (function () {
+  const header = document.querySelector("[data-header]");
+  const navToggle = document.querySelector("[data-nav-toggle]");
+  const navMenu = document.querySelector("[data-nav-menu]");
   const resultsGrid = document.querySelector("#catalog-results");
   const resultsLabel = document.querySelector("#catalog-results-label");
   const clearButton = document.querySelector("#catalog-clear-filters");
@@ -35,6 +38,17 @@
     group: "",
     value: ""
   };
+
+  function closeNavMenu() {
+    header?.classList.remove("is-nav-open");
+    navToggle?.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleNavMenu() {
+    if (!header || !navToggle) return;
+    const isOpen = header.classList.toggle("is-nav-open");
+    navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  }
 
   const items = [
     { title: "CS-XG-V12", code: "Cardio | Treadmills", category: "cardio", subcategory: "treadmills", series: "", image: "assets/catalog-items/cardio-cs-xg-v12.png", description: "LED-console commercial treadmill built for premium cardio floors." },
@@ -392,6 +406,17 @@
     state.group = "";
     state.value = "";
     renderCards();
+  });
+
+  navToggle?.addEventListener("click", toggleNavMenu);
+  navMenu?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeNavMenu);
+  });
+  document.addEventListener("click", (event) => {
+    if (!header?.contains(event.target)) closeNavMenu();
+  });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 720) closeNavMenu();
   });
 
   resultsGrid.addEventListener("click", (event) => {
