@@ -4,6 +4,15 @@
   const clearButton = document.querySelector("#test-clear-filters");
   const filterButtons = document.querySelectorAll("[data-filter-type]");
   const dropdowns = document.querySelectorAll(".test-filter-dropdown");
+  const placeholderImage =
+    "data:image/svg+xml;utf8," +
+    encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
+        <rect width="800" height="520" rx="36" fill="#f4f6f8"/>
+        <rect x="180" y="110" width="440" height="220" rx="28" fill="#ffffff" stroke="#c4cedb" stroke-width="12"/>
+        <text x="400" y="402" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" fill="#667386">cult equipment</text>
+      </svg>
+    `);
 
   if (!resultsGrid || !resultsLabel || !clearButton) return;
 
@@ -20,7 +29,7 @@
       category: "cardio",
       subcategory: "treadmills",
       series: "",
-      image: "assets/test-catalog/individual/cardio-cs-xg-v12.png",
+      image: "assets/cardio-cs-xg-v12.png",
       description: "LED-console commercial treadmill built for premium cardio floors."
     },
     {
@@ -29,7 +38,7 @@
       category: "cardio",
       subcategory: "treadmills",
       series: "",
-      image: "assets/test-catalog/individual/cardio-cs-ac800.png",
+      image: "assets/cardio-cs-ac800.png",
       description: "AC treadmill format for full-day commercial use."
     },
     {
@@ -38,7 +47,7 @@
       category: "cardio",
       subcategory: "treadmills",
       series: "",
-      image: "assets/test-catalog/individual/cardio-cs-v6.png",
+      image: "assets/cardio-cs-v6.png",
       description: "High-speed treadmill for premium club cardio zones."
     },
     {
@@ -47,7 +56,7 @@
       category: "cardio",
       subcategory: "treadmills",
       series: "",
-      image: "assets/test-catalog/individual/cardio-cs-t919.png",
+      image: "assets/cardio-cs-t919.png",
       description: "Large-screen treadmill for flagship cardio areas."
     },
     {
@@ -56,7 +65,7 @@
       category: "cardio",
       subcategory: "treadmills",
       series: "",
-      image: "assets/test-catalog/individual/cardio-cs-xz8001s.png",
+      image: "assets/cardio-cs-xz8001s.png",
       description: "Commercial treadmill with quick-adjust controls and anti-skid side strips."
     },
     {
@@ -65,7 +74,7 @@
       category: "cardio",
       subcategory: "treadmills",
       series: "",
-      image: "assets/test-catalog/individual/cardio-cs-xz8003c.png",
+      image: "assets/cardio-cs-xz8003c.png",
       description: "Manual curved treadmill for high-intensity running training."
     },
     {
@@ -74,7 +83,7 @@
       category: "cardio",
       subcategory: "ellipticals",
       series: "",
-      image: "assets/test-catalog/individual/cardio-cs-e12-v5.png",
+      image: "assets/cardio-cs-e12-v5.png",
       description: "LED-display elliptical with magnetic resistance and incline levels."
     },
     {
@@ -83,7 +92,7 @@
       category: "cardio",
       subcategory: "ellipticals",
       series: "",
-      image: "assets/test-catalog/individual/cardio-cs-e17.png",
+      image: "assets/cardio-cs-e17.png",
       description: "Commercial elliptical with longer stride and higher resistance range."
     },
     {
@@ -92,7 +101,7 @@
       category: "cardio",
       subcategory: "upright-bikes",
       series: "",
-      image: "assets/test-catalog/individual/cardio-led-console-bike.png",
+      image: "assets/cardio-led-console-bike.png",
       description: "Commercial upright bike with LED console and magnetic resistance."
     },
     {
@@ -101,7 +110,7 @@
       category: "cardio",
       subcategory: "recumbent-bikes",
       series: "",
-      image: "assets/test-catalog/individual/cardio-recumbent-bike.png",
+      image: "assets/cardio-recumbent-bike.png",
       description: "Seated cardio bike format for long-duration, lower-impact training."
     },
     {
@@ -110,7 +119,7 @@
       category: "cardio",
       subcategory: "spinning-bikes",
       series: "",
-      image: "assets/test-catalog/individual/cardio-spinning-bike.png",
+      image: "assets/cardio-spinning-bike.png",
       description: "Studio-style spin bike for commercial cycling rooms."
     },
     {
@@ -119,7 +128,7 @@
       category: "cardio",
       subcategory: "high-intensity",
       series: "",
-      image: "assets/test-catalog/individual/cardio-air-bike.png",
+      image: "assets/cardio-air-bike.png",
       description: "Fan-driven conditioning bike for interval and performance training."
     },
     {
@@ -128,7 +137,7 @@
       category: "strength",
       subcategory: "racks-stations",
       series: "",
-      image: "assets/test-catalog/individual/strength-squat-rack-cs-xh021.png",
+      image: "assets/strength-squat-rack-cs-xh021.png",
       description: "Commercial squat rack for free-weight and barbell training zones."
     },
     {
@@ -137,7 +146,7 @@
       category: "strength",
       subcategory: "functional-training",
       series: "",
-      image: "assets/test-catalog/individual/strength-functional-trainer-cs-h005a.png",
+      image: "assets/strength-functional-trainer-cs-h005a.png",
       description: "Dual-column functional training station for cable-based movement work."
     },
     {
@@ -146,7 +155,7 @@
       category: "strength",
       subcategory: "racks-stations",
       series: "",
-      image: "assets/test-catalog/individual/strength-half-rack-cs-g890.png",
+      image: "assets/strength-half-rack-cs-g890.png",
       description: "Commercial half rack for compact barbell training setups."
     },
     {
@@ -155,7 +164,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fusion-series",
-      image: "assets/test-catalog/individual/fusion-chest-press-cs-k6-08.png",
+      image: "assets/fusion-chest-press-cs-k6-08.png",
       description: "Fusion Series chest press from the 2025 commercial catalog."
     },
     {
@@ -164,7 +173,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fusion-series",
-      image: "assets/test-catalog/individual/fusion-shoulder-press-cs-k6-06.png",
+      image: "assets/fusion-shoulder-press-cs-k6-06.png",
       description: "Fusion Series shoulder press with dedicated product visual."
     },
     {
@@ -173,7 +182,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fusion-series",
-      image: "assets/test-catalog/individual/fusion-pec-fly-rear-delt-cs-k6-07.png",
+      image: "assets/fusion-pec-fly-rear-delt-cs-k6-07.png",
       description: "Fusion Series dual-function chest and rear-delt machine."
     },
     {
@@ -182,7 +191,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fusion-series",
-      image: "assets/test-catalog/individual/fusion-lat-pull-down-cs-k6-35.png",
+      image: "assets/fusion-lat-pull-down-cs-k6-35.png",
       description: "Fusion Series lat pull down for back-focused selectorized training."
     },
     {
@@ -191,7 +200,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fusion-series",
-      image: "assets/test-catalog/individual/fusion-leg-extension-cs-k6-02.png",
+      image: "assets/fusion-leg-extension-cs-k6-02.png",
       description: "Fusion Series leg extension with isolated quad focus."
     },
     {
@@ -200,7 +209,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "flow-series",
-      image: "assets/test-catalog/individual/flow-chest-press.png",
+      image: "assets/flow-chest-press.png",
       description: "Flow Series chest press with aviation-grade cable-led selectorized design."
     },
     {
@@ -209,7 +218,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "flow-series",
-      image: "assets/test-catalog/individual/flow-shoulder-press.png",
+      image: "assets/flow-shoulder-press.png",
       description: "Flow Series shoulder press from the commercial catalog extract."
     },
     {
@@ -218,7 +227,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "flow-series",
-      image: "assets/test-catalog/individual/flow-seated-row.png",
+      image: "assets/flow-seated-row.png",
       description: "Flow Series seated row with dedicated product render."
     },
     {
@@ -227,7 +236,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "flow-series",
-      image: "assets/test-catalog/individual/flow-assisted-dip-chin.png",
+      image: "assets/flow-assisted-dip-chin.png",
       description: "Flow Series assisted dip and chin station."
     },
     {
@@ -236,7 +245,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "flux-series",
-      image: "assets/test-catalog/individual/flux-chest-press.png",
+      image: "assets/flux-chest-press.png",
       description: "Flux Series chest press with compact selectorized footprint."
     },
     {
@@ -245,7 +254,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "flux-series",
-      image: "assets/test-catalog/individual/flux-shoulder-press.png",
+      image: "assets/flux-shoulder-press.png",
       description: "Flux Series shoulder press with gas-spring seat adjustment."
     },
     {
@@ -254,7 +263,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "flux-series",
-      image: "assets/test-catalog/individual/flux-longpull.png",
+      image: "assets/flux-longpull.png",
       description: "Flux Series longpull row station."
     },
     {
@@ -263,7 +272,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "flux-series",
-      image: "assets/test-catalog/individual/flux-dip-chin-assist.png",
+      image: "assets/flux-dip-chin-assist.png",
       description: "Flux Series assisted dip and chin equipment."
     },
     {
@@ -272,7 +281,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fuel-series",
-      image: "assets/test-catalog/individual/fuel-chest-press.png",
+      image: "assets/fuel-chest-press.png",
       description: "Fuel Series chest press in a compact commercial format."
     },
     {
@@ -281,7 +290,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fuel-series",
-      image: "assets/test-catalog/individual/fuel-shoulder-press.png",
+      image: "assets/fuel-shoulder-press.png",
       description: "Fuel Series shoulder press with sturdy shroud-based design."
     },
     {
@@ -290,7 +299,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fuel-series",
-      image: "assets/test-catalog/individual/fuel-seated-row.png",
+      image: "assets/fuel-seated-row.png",
       description: "Fuel Series seated row for commercial back training layouts."
     },
     {
@@ -299,7 +308,7 @@
       category: "strength",
       subcategory: "selectorized-series",
       series: "fuel-series",
-      image: "assets/test-catalog/individual/fuel-tricep-press.png",
+      image: "assets/fuel-tricep-press.png",
       description: "Fuel Series tricep press for upper-body circuit floors."
     },
     {
@@ -308,7 +317,7 @@
       category: "strength",
       subcategory: "plate-loaded-series",
       series: "force-series",
-      image: "assets/test-catalog/individual/force-chest-press.png",
+      image: "assets/force-chest-press.png",
       description: "Force Series plate-loaded chest press."
     },
     {
@@ -317,7 +326,7 @@
       category: "strength",
       subcategory: "plate-loaded-series",
       series: "force-series",
-      image: "assets/test-catalog/individual/force-incline-chest-press.png",
+      image: "assets/force-incline-chest-press.png",
       description: "Force Series incline chest press with ISO lateral movement."
     },
     {
@@ -326,7 +335,7 @@
       category: "strength",
       subcategory: "plate-loaded-series",
       series: "force-series",
-      image: "assets/test-catalog/individual/force-row.png",
+      image: "assets/force-row.png",
       description: "Force Series row station from the plate-loaded range."
     },
     {
@@ -335,7 +344,7 @@
       category: "strength",
       subcategory: "plate-loaded-series",
       series: "force-series",
-      image: "assets/test-catalog/individual/force-45-degree-leg-press.png",
+      image: "assets/force-45-degree-leg-press.png",
       description: "Force Series 45 degree leg press for lower-body strength zones."
     }
   ];
@@ -394,6 +403,26 @@
     return `Showing ${visibleItems.length} items`;
   }
 
+  function wireImageFallbacks() {
+    const images = resultsGrid.querySelectorAll(".test-result-media img");
+
+    images.forEach((image) => {
+      const applyFallback = () => {
+        if (image.dataset.fallbackApplied === "true") return;
+        image.dataset.fallbackApplied = "true";
+        image.src = placeholderImage;
+        image.alt = "cult equipment";
+        image.classList.add("is-placeholder");
+      };
+
+      image.addEventListener("error", applyFallback);
+
+      if (image.complete && image.naturalWidth === 0) {
+        applyFallback();
+      }
+    });
+  }
+
   function renderCards() {
     const visibleItems = getVisibleItems();
 
@@ -405,6 +434,8 @@
             <p>Try another filter from the dropdowns above.</p>
           </article>
         `;
+
+    wireImageFallbacks();
 
     resultsLabel.textContent = getLabel(visibleItems);
     clearButton.hidden = state.type === "all";
@@ -451,3 +482,4 @@
 
   renderCards();
 })();
+
