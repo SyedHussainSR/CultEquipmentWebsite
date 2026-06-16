@@ -4,6 +4,7 @@
   const clearButton = document.querySelector("#test-clear-filters");
   const filterButtons = document.querySelectorAll("[data-filter-type]");
   const dropdowns = document.querySelectorAll(".test-filter-dropdown");
+  const pageMain = document.querySelector(".test-page-main");
   const placeholderImage =
     "data:image/svg+xml;utf8," +
     encodeURIComponent(`
@@ -358,11 +359,23 @@
       .replaceAll("'", "&#39;");
   }
 
+  function getBackupImagePath(imagePath) {
+    const fileName = imagePath.split("/").pop();
+    return `assets/test-catalog/individual/${fileName}`;
+  }
+
   function cardMarkup(item) {
+    const backupImage = getBackupImagePath(item.image);
+
     return `
       <article class="test-result-card">
         <div class="test-result-media">
-          <img src="${item.image}" alt="${escapeHtml(item.title)}" loading="lazy" />
+          <img
+            src="${item.image}"
+            data-fallback-src="${backupImage}"
+            alt="${escapeHtml(item.title)}"
+            loading="lazy"
+          />
         </div>
         <div class="test-result-copy">
           <p class="test-result-kicker">${escapeHtml(item.code)}</p>
@@ -403,11 +416,73 @@
     return `Showing ${visibleItems.length} items`;
   }
 
+  function syncCatalogLayout() {
+    if (pageMain) {
+      pageMain.style.paddingTop = window.innerWidth <= 720 ? "144px" : "156px";
+    }
+
+    resultsGrid.style.display = "grid";
+    resultsGrid.style.justifyContent = "center";
+    resultsGrid.style.gap = window.innerWidth <= 720 ? "16px" : "12px";
+
+    if (window.innerWidth <= 720) {
+      resultsGrid.style.gridTemplateColumns = "1fr";
+    } else if (window.innerWidth <= 1100) {
+      resultsGrid.style.gridTemplateColumns = "repeat(2, minmax(0, 1fr))";
+    } else {
+      resultsGrid.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 300px))";
+    }
+
+    clearButton.style.display = state.type === "all" ? "none" : "inline-flex";
+
+    resultsGrid.querySelectorAll(".test-result-card").forEach((card) => {
+      card.style.display = "grid";
+      card.style.overflow = "hidden";
+      card.style.borderRadius = "20px";
+      card.style.background = "#ffffff";
+      card.style.maxWidth = "300px";
+      card.style.width = "100%";
+    });
+
+    resultsGrid.querySelectorAll(".test-result-media").forEach((media) => {
+      media.style.display = "flex";
+      media.style.alignItems = "center";
+      media.style.justifyContent = "center";
+      media.style.minHeight = window.innerWidth <= 720 ? "176px" : "150px";
+      media.style.padding = "10px 10px 0";
+    });
+
+    resultsGrid.querySelectorAll(".test-result-copy").forEach((copy) => {
+      copy.style.display = "grid";
+      copy.style.gap = "7px";
+      copy.style.padding = "12px 14px 14px";
+    });
+
+    resultsGrid.querySelectorAll(".test-result-copy h3").forEach((heading) => {
+      heading.style.fontSize = "1rem";
+      heading.style.lineHeight = "1.18";
+    });
+
+    resultsGrid.querySelectorAll(".test-result-copy p").forEach((paragraph) => {
+      if (paragraph.classList.contains("test-result-kicker")) return;
+      paragraph.style.fontSize = "0.84rem";
+      paragraph.style.lineHeight = "1.45";
+    });
+  }
+
   function wireImageFallbacks() {
     const images = resultsGrid.querySelectorAll(".test-result-media img");
 
     images.forEach((image) => {
       const applyFallback = () => {
+        const backupSrc = image.dataset.fallbackSrc || "";
+
+        if (backupSrc && image.dataset.triedBackup !== "true" && image.getAttribute("src") !== backupSrc) {
+          image.dataset.triedBackup = "true";
+          image.src = backupSrc;
+          return;
+        }
+
         if (image.dataset.fallbackApplied === "true") return;
         image.dataset.fallbackApplied = "true";
         image.src = placeholderImage;
@@ -436,9 +511,11 @@
         `;
 
     wireImageFallbacks();
+    syncCatalogLayout();
 
     resultsLabel.textContent = getLabel(visibleItems);
     clearButton.hidden = state.type === "all";
+    clearButton.style.display = state.type === "all" ? "none" : "inline-flex";
 
     filterButtons.forEach((button) => {
       const isActive =
@@ -481,5 +558,6 @@
   });
 
   renderCards();
+  window.addEventListener("resize", syncCatalogLayout);
 })();
 
