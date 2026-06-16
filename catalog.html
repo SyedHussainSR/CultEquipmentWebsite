@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>cult equipment Catalog | Commercial Gym Equipment</title>
+    <title>cult equipment Catalog | Filtered Equipment Catalogue</title>
     <meta
       name="description"
-      content="Browse the cult equipment commercial catalog with cardio, strength, and free-weight equipment. Add machines to your quote list and continue to the main lead form."
+      content="Browse the improved cult equipment catalogue with cleaner filters, series views, and product-by-product equipment cards."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,61 +27,66 @@
           <a href="index.html#packages">Packages</a>
           <a href="index.html#owners">Projects</a>
           <a href="catalog.html">Catalog</a>
-          <a href="test.html">Test</a>
         </nav>
         <a class="nav-cta" href="index.html#lead-form-wrap">Request a call</a>
       </header>
 
-      <main class="catalog-page-main">
-        <div class="catalog-page-shell">
-          <section class="catalog-section">
-            <div class="catalog-grid-head">
-              <div>
-                <h1>Catalogue</h1>
-              </div>
-              <div class="catalog-count" id="catalog-count">Showing 0 products</div>
+      <main class="test-page-main">
+        <div class="test-page-shell">
+          <section class="catalog-title-strip">
+            <h1>Catalog</h1>
+          </section>
+
+          <section class="test-filter-shell">
+            <div class="test-filter-row" aria-label="Catalogue filters">
+              <details class="test-filter-dropdown">
+                <summary>Cardio</summary>
+                <div class="test-filter-menu">
+                  <button type="button" data-filter-type="group" data-filter-group="cardio">All Cardio</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="cardio" data-filter-value="treadmills">Treadmills</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="cardio" data-filter-value="ellipticals">Ellipticals</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="cardio" data-filter-value="upright-bikes">Upright Bikes</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="cardio" data-filter-value="recumbent-bikes">Recumbent Bikes</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="cardio" data-filter-value="spinning-bikes">Spinning Bikes</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="cardio" data-filter-value="high-intensity">High Intensity</button>
+                </div>
+              </details>
+
+              <details class="test-filter-dropdown">
+                <summary>Strength</summary>
+                <div class="test-filter-menu">
+                  <button type="button" data-filter-type="group" data-filter-group="strength">All Strength</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="strength" data-filter-value="selectorized-series">Selectorized Series</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="strength" data-filter-value="plate-loaded-series">Plate Loaded Series</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="strength" data-filter-value="racks-stations">Racks + Stations</button>
+                  <button type="button" data-filter-type="subcategory" data-filter-group="strength" data-filter-value="functional-training">Functional Training</button>
+                </div>
+              </details>
+
+              <details class="test-filter-dropdown">
+                <summary>Series</summary>
+                <div class="test-filter-menu">
+                  <button type="button" data-filter-type="group" data-filter-group="series">All Series</button>
+                  <button type="button" data-filter-type="series" data-filter-group="series" data-filter-value="fusion-series">Fusion Series</button>
+                  <button type="button" data-filter-type="series" data-filter-group="series" data-filter-value="flow-series">Flow Series</button>
+                  <button type="button" data-filter-type="series" data-filter-group="series" data-filter-value="flux-series">Flux Series</button>
+                  <button type="button" data-filter-type="series" data-filter-group="series" data-filter-value="fuel-series">Fuel Series</button>
+                  <button type="button" data-filter-type="series" data-filter-group="series" data-filter-value="force-series">Force Series</button>
+                </div>
+              </details>
             </div>
 
-            <div class="catalog-toolbar" aria-label="Catalog categories">
-              <button class="catalog-pill is-active" type="button" data-catalog-filter="all">All</button>
-              <button class="catalog-pill" type="button" data-catalog-filter="cardio">Cardio</button>
-              <button class="catalog-pill" type="button" data-catalog-filter="strength">Strength</button>
-              <button class="catalog-pill" type="button" data-catalog-filter="plate">Plate Loaded</button>
+            <div class="test-filter-meta">
+              <p id="test-results-label">Showing all catalogue items</p>
+              <button class="button ghost" id="test-clear-filters" type="button" hidden>Clear Filters</button>
             </div>
+          </section>
 
-            <div class="catalog-grid" id="catalog-grid"></div>
+          <section class="test-results-shell">
+            <div class="test-results-grid" id="test-results"></div>
           </section>
         </div>
       </main>
-
-      <div class="quote-tray" id="quote-tray" hidden>
-        <div class="quote-tray-copy">
-          <strong id="quote-count">0 items selected</strong>
-          <span>Your selected equipment will carry to the main quote form.</span>
-        </div>
-        <div class="quote-tray-actions">
-          <button class="button ghost" type="button" id="quote-review">Review Quote</button>
-          <a class="button primary" href="index.html#lead-form-wrap">Continue to Quote Form</a>
-        </div>
-      </div>
-
-      <aside class="quote-drawer" id="quote-drawer" aria-hidden="true">
-        <div class="quote-drawer-card">
-          <div class="quote-drawer-head">
-            <div>
-              <p class="catalog-type">Quote List</p>
-              <h3>Selected equipment</h3>
-            </div>
-            <button class="quote-close" type="button" id="quote-close" aria-label="Close quote drawer">x</button>
-          </div>
-          <div class="quote-list" id="quote-list">
-            <p class="quote-empty">No products added yet.</p>
-          </div>
-          <div class="quote-drawer-actions">
-            <a class="button primary" href="index.html#lead-form-wrap">Continue to Quote Form</a>
-          </div>
-        </div>
-      </aside>
 
       <footer class="site-footer">
         <img src="assets/cult-equipment-logo.png" alt="cult equipment" />
@@ -107,6 +112,6 @@
       </svg>
     </a>
 
-    <script src="catalog.js"></script>
+    <script src="test.js"></script>
   </body>
 </html>

@@ -1815,15 +1815,15 @@ select:focus {
 
 .test-results-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
 }
 
 .test-result-card,
 .test-empty-state {
   overflow: hidden;
   border: 1px solid rgba(10, 13, 16, 0.08);
-  border-radius: 24px;
+  border-radius: 20px;
   background: #ffffff;
   color: #0a0d10;
 }
@@ -1831,21 +1831,21 @@ select:focus {
 .test-result-media {
   display: grid;
   place-items: center;
-  min-height: 270px;
-  padding: 18px;
+  min-height: 190px;
+  padding: 14px;
   background: #ffffff;
 }
 
 .test-result-media img {
   width: 100%;
-  height: 100%;
+  height: 150px;
   object-fit: contain;
 }
 
 .test-result-copy {
   display: grid;
-  gap: 10px;
-  padding: 18px;
+  gap: 8px;
+  padding: 14px;
 }
 
 .test-result-kicker {
@@ -1861,13 +1861,15 @@ select:focus {
 .test-empty-state h3 {
   margin: 0;
   color: #0a0d10;
-  font-size: 1.35rem;
+  font-size: 1.1rem;
+  line-height: 1.15;
 }
 
 .test-result-copy p,
 .test-empty-state p {
   margin: 0;
   color: #566173;
+  font-size: 0.9rem;
 }
 
 .test-result-tags {
@@ -1891,6 +1893,66 @@ select:focus {
 
 .test-empty-state {
   padding: 26px;
+}
+
+.catalog-title-strip {
+  margin-bottom: 18px;
+}
+
+.catalog-title-strip h1 {
+  margin: 0;
+  font-size: clamp(3rem, 6vw, 5.2rem);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+}
+
+.test-filter-dropdown summary::after {
+  content: "\25BE";
+}
+
+.test-results-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 300px));
+  justify-content: center;
+  gap: 12px;
+}
+
+.test-result-card,
+.test-empty-state {
+  display: grid;
+}
+
+.test-result-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: 10px 10px 0;
+}
+
+.test-result-media img {
+  width: auto;
+  max-width: 100%;
+  height: 168px;
+  object-position: center;
+  transform: scale(1.14);
+  transform-origin: center center;
+}
+
+.test-result-copy {
+  gap: 7px;
+  padding: 12px 14px 14px;
+}
+
+.test-result-copy h3,
+.test-empty-state h3 {
+  font-size: 1rem;
+  line-height: 1.18;
+}
+
+.test-result-copy p,
+.test-empty-state p {
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 @media (max-width: 1100px) {
@@ -1956,5 +2018,19 @@ select:focus {
 
   .test-result-media {
     min-height: 230px;
+  }
+}
+
+@media (max-width: 720px) {
+  .catalog-title-strip h1 {
+    font-size: 2.8rem;
+  }
+
+  .test-result-media {
+    min-height: 176px;
+  }
+
+  .test-result-media img {
+    height: 190px;
   }
 }
