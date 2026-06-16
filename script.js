@@ -17,9 +17,12 @@
   const quoteCloseButton = document.querySelector("#quote-close");
   const quoteScrollForm = document.querySelector("#quote-scroll-form");
   const selectedProductsInput = document.querySelector("#selected-products");
+  const whatsappFloat = document.querySelector(".whatsapp-float");
   const posterCache = new Map();
   const quoteItems = [];
   const quoteStorageKey = "cult-equipment-quote-items";
+  const whatsappNumber = "917625030537";
+  const defaultWhatsappMessage = "Hey, I have visited the website, Need more info!";
   const params = new URLSearchParams(window.location.search);
   const trackedParams = [
     "utm_source",
@@ -228,6 +231,23 @@
       .join(" | ");
   }
 
+  function buildWhatsappMessage() {
+    if (!quoteItems.length) return defaultWhatsappMessage;
+
+    const lines = quoteItems.map((item) => `- ${item.name} x${item.qty}`);
+    return [
+      defaultWhatsappMessage,
+      "",
+      "Selected equipment:",
+      ...lines
+    ].join("\n");
+  }
+
+  function updateWhatsappLink() {
+    if (!whatsappFloat) return;
+    whatsappFloat.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildWhatsappMessage())}`;
+  }
+
   function saveQuoteItems() {
     try {
       window.localStorage.setItem(quoteStorageKey, JSON.stringify(quoteItems));
@@ -277,6 +297,7 @@
     if (!quoteList) {
       syncSelectedProductsField();
       saveQuoteItems();
+      updateWhatsappLink();
       return;
     }
 
@@ -284,6 +305,7 @@
       quoteList.innerHTML = `<p class="quote-empty">No products added yet.</p>`;
       syncSelectedProductsField();
       saveQuoteItems();
+      updateWhatsappLink();
       return;
     }
 
@@ -308,6 +330,7 @@
 
     syncSelectedProductsField();
     saveQuoteItems();
+    updateWhatsappLink();
   }
 
   function setCatalogFilter(filter) {

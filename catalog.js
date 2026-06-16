@@ -5,7 +5,19 @@
   const filterButtons = document.querySelectorAll("[data-catalog-filter-type]");
   const dropdowns = document.querySelectorAll(".catalog-filter-dropdown");
   const pageMain = document.querySelector(".catalog-browser-main");
-  const assetVersion = "20260616-2";
+  const quoteTray = document.querySelector("#quote-tray");
+  const quoteCount = document.querySelector("#quote-count");
+  const quoteDrawer = document.querySelector("#quote-drawer");
+  const quoteList = document.querySelector("#quote-list");
+  const quoteReviewButton = document.querySelector("#quote-review");
+  const quoteCloseButton = document.querySelector("#quote-close");
+  const quoteGoFormLinks = document.querySelectorAll("[data-quote-go-form]");
+  const whatsappFloat = document.querySelector(".whatsapp-float");
+  const assetVersion = "20260616-3";
+  const quoteStorageKey = "cult-equipment-quote-items";
+  const quoteItems = [];
+  const whatsappNumber = "917625030537";
+  const defaultWhatsappMessage = "Hey, I have visited the website, Need more info!";
   const placeholderImage =
     "data:image/svg+xml;utf8," +
     encodeURIComponent(`
@@ -76,9 +88,17 @@
       .replaceAll("'", "&#39;");
   }
 
-  function getFallbackImagePath(imagePath) {
-    const fileName = imagePath.split("/").pop();
-    return `assets/${fileName}`;
+  function getQuoteItem(name) {
+    return quoteItems.find((item) => item.name === name);
+  }
+
+  function getQuoteQty(name) {
+    return getQuoteItem(name)?.qty || 0;
+  }
+
+  function getAddButtonLabel(name) {
+    const qty = getQuoteQty(name);
+    return qty > 0 ? `Added x${qty}` : "Add to Quote";
   }
 
   function cardMarkup(item) {
@@ -87,7 +107,6 @@
         <div class="catalog-result-media">
           <img
             src="${withVersion(item.image)}"
-            data-fallback-src="${withVersion(getFallbackImagePath(item.image))}"
             alt="${escapeHtml(item.title)}"
             loading="lazy"
           />
@@ -96,9 +115,148 @@
           <p class="catalog-result-kicker">${escapeHtml(item.code)}</p>
           <h3>${escapeHtml(item.title)}</h3>
           <p>${escapeHtml(item.description)}</p>
+          <div class="catalog-result-actions">
+            <button
+              class="button primary catalog-add${getQuoteQty(item.title) > 0 ? " is-added" : ""}"
+              type="button"
+              data-quote-name="${escapeHtml(item.title)}"
+              data-quote-meta="${escapeHtml(item.code)}"
+            >
+              ${escapeHtml(getAddButtonLabel(item.title))}
+            </button>
+          </div>
         </div>
       </article>
     `;
+  }
+
+  function saveQuoteItems() {
+    try {
+      window.localStorage.setItem(quoteStorageKey, JSON.stringify(quoteItems));
+    } catch {
+      return;
+    }
+  }
+
+  function loadQuoteItems() {
+    try {
+      const raw = window.localStorage.getItem(quoteStorageKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return;
+      parsed.forEach((item) => {
+        if (!item || typeof item.name !== "string") return;
+        quoteItems.push({
+          name: item.name,
+          meta: typeof item.meta === "string" ? item.meta : "",
+          qty: Number.isFinite(item.qty) && item.qty > 0 ? Math.min(20, item.qty) : 1
+        });
+      });
+    } catch {
+      return;
+    }
+  }
+
+  function syncAddButtons() {
+    resultsGrid.querySelectorAll(".catalog-add").forEach((button) => {
+      const name = button.dataset.quoteName || "";
+      const qty = getQuoteQty(name);
+      button.textContent = qty > 0 ? `Added x${qty}` : "Add to Quote";
+      button.classList.toggle("is-added", qty > 0);
+    });
+  }
+
+  function buildWhatsappMessage() {
+    if (!quoteItems.length) return defaultWhatsappMessage;
+
+    const lines = quoteItems.map((item) => `- ${item.name} x${item.qty}`);
+    return [
+      defaultWhatsappMessage,
+      "",
+      "Selected equipment:",
+      ...lines
+    ].join("\n");
+  }
+
+  function updateWhatsappLink() {
+    if (!whatsappFloat) return;
+    whatsappFloat.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildWhatsappMessage())}`;
+  }
+
+  function updateQuoteUi() {
+    const total = quoteItems.reduce((sum, item) => sum + item.qty, 0);
+
+    if (quoteCount) {
+      quoteCount.textContent = `${total} ${total === 1 ? "item" : "items"} selected`;
+    }
+
+    if (quoteTray) {
+      quoteTray.hidden = total === 0;
+    }
+
+    if (quoteList) {
+      if (total === 0) {
+        quoteList.innerHTML = `<p class="quote-empty">No products added yet.</p>`;
+      } else {
+        quoteList.innerHTML = quoteItems
+          .map(
+            (item, index) => `
+              <div class="quote-item">
+                <div class="quote-item-copy">
+                  <strong>${escapeHtml(item.name)}</strong>
+                  <span>${escapeHtml(item.meta)}</span>
+                </div>
+                <div class="quote-item-controls">
+                  <button class="quote-step" type="button" data-quote-adjust="${index}" data-quote-delta="-1">-</button>
+                  <span class="quote-qty">${item.qty}</span>
+                  <button class="quote-step" type="button" data-quote-adjust="${index}" data-quote-delta="1">+</button>
+                  <button class="quote-remove" type="button" data-quote-remove="${index}">x</button>
+                </div>
+              </div>
+            `
+          )
+          .join("");
+      }
+    }
+
+    saveQuoteItems();
+    syncAddButtons();
+    updateWhatsappLink();
+  }
+
+  function addQuoteItem(name, meta) {
+    const existing = getQuoteItem(name);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      quoteItems.push({ name, meta, qty: 1 });
+    }
+    updateQuoteUi();
+  }
+
+  function adjustQuoteItem(index, delta) {
+    const item = quoteItems[index];
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) {
+      quoteItems.splice(index, 1);
+    }
+    updateQuoteUi();
+  }
+
+  function removeQuoteItem(index) {
+    quoteItems.splice(index, 1);
+    updateQuoteUi();
+  }
+
+  function openQuoteDrawer() {
+    quoteDrawer?.classList.add("is-open");
+    quoteDrawer?.setAttribute("aria-hidden", "false");
+  }
+
+  function closeQuoteDrawer() {
+    quoteDrawer?.classList.remove("is-open");
+    quoteDrawer?.setAttribute("aria-hidden", "true");
   }
 
   function getVisibleItems() {
@@ -161,14 +319,6 @@
 
     images.forEach((image) => {
       const applyFallback = () => {
-        const backupSrc = image.dataset.fallbackSrc || "";
-
-        if (backupSrc && image.dataset.triedBackup !== "true" && image.getAttribute("src") !== backupSrc) {
-          image.dataset.triedBackup = "true";
-          image.src = backupSrc;
-          return;
-        }
-
         if (image.dataset.fallbackApplied === "true") return;
         image.dataset.fallbackApplied = "true";
         image.src = placeholderImage;
@@ -198,6 +348,7 @@
 
     wireImageFallbacks();
     syncCatalogLayout();
+    syncAddButtons();
 
     resultsLabel.textContent = getLabel(visibleItems);
     clearButton.hidden = state.type === "all";
@@ -243,6 +394,42 @@
     renderCards();
   });
 
+  resultsGrid.addEventListener("click", (event) => {
+    const addButton = event.target.closest(".catalog-add");
+    if (!addButton) return;
+
+    addQuoteItem(addButton.dataset.quoteName || "Equipment", addButton.dataset.quoteMeta || "");
+    openQuoteDrawer();
+  });
+
+  quoteReviewButton?.addEventListener("click", openQuoteDrawer);
+  quoteCloseButton?.addEventListener("click", closeQuoteDrawer);
+  quoteDrawer?.addEventListener("click", (event) => {
+    if (event.target === quoteDrawer) closeQuoteDrawer();
+  });
+  quoteList?.addEventListener("click", (event) => {
+    const adjustButton = event.target.closest("[data-quote-adjust]");
+    if (adjustButton) {
+      adjustQuoteItem(Number(adjustButton.dataset.quoteAdjust), Number(adjustButton.dataset.quoteDelta));
+      return;
+    }
+
+    const removeButton = event.target.closest("[data-quote-remove]");
+    if (removeButton) {
+      removeQuoteItem(Number(removeButton.dataset.quoteRemove));
+    }
+  });
+  quoteGoFormLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      closeQuoteDrawer();
+    });
+  });
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeQuoteDrawer();
+  });
+
+  loadQuoteItems();
+  updateQuoteUi();
   renderCards();
   window.addEventListener("resize", syncCatalogLayout);
 })();

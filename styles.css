@@ -2201,6 +2201,8 @@ select:focus {
 
 .catalog-result-copy {
   display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  align-content: start;
   gap: 7px;
   padding: 12px 14px 14px;
 }
@@ -2228,6 +2230,22 @@ select:focus {
   color: #566173;
   font-size: 0.84rem;
   line-height: 1.45;
+}
+
+.catalog-result-actions {
+  margin-top: 6px;
+}
+
+.catalog-add {
+  width: 100%;
+}
+
+.catalog-add.is-added {
+  box-shadow: 0 0 0 1px rgba(10, 13, 16, 0.08) inset;
+}
+
+.catalog-page .quote-tray {
+  bottom: 96px;
 }
 
 .catalog-empty-state {
