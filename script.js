@@ -320,7 +320,7 @@
     stopSeriesAutoplay();
     seriesCarouselTimer = window.setInterval(() => {
       setSeriesSlide(seriesSlideIndex + 1);
-    }, 3200);
+    }, 2200);
   }
 
   async function switchHeroVideo(button) {
