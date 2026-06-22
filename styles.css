@@ -565,6 +565,15 @@ h3 {
   filter: contrast(1.03) saturate(0.98) drop-shadow(0 18px 28px rgba(0, 0, 0, 0.28));
 }
 
+.series-product img.image-shift-left {
+  transform: translateX(-26px);
+}
+
+.series-product img.image-fit-right {
+  height: clamp(292px, 29vw, 424px);
+  transform: translateX(-42px);
+}
+
 .series-product strong {
   color: rgba(255, 244, 244, 0.96);
   font-size: 0.88rem;
@@ -1798,6 +1807,15 @@ select:focus {
   .series-product img {
     max-width: none;
     height: clamp(146px, 48vw, 192px);
+  }
+
+  .series-product img.image-shift-left {
+    transform: translateX(-10px);
+  }
+
+  .series-product img.image-fit-right {
+    height: clamp(138px, 44vw, 182px);
+    transform: translateX(-18px);
   }
 
   .series-product strong {

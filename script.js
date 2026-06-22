@@ -221,8 +221,8 @@
       link: "#lead-form-wrap",
       products: [
         { name: "Chest Press", image: "assets/catalog-items/fuel-chest-press.png" },
-        { name: "Shoulder Press", image: "assets/catalog-items/fuel-shoulder-press.png", center: true },
-        { name: "Tricep Press", image: "assets/catalog-items/fuel-tricep-press.png" }
+        { name: "Shoulder Press", image: "assets/catalog-items/fuel-shoulder-press.png", center: true, imageClass: "image-shift-left" },
+        { name: "Tricep Press", image: "assets/catalog-items/fuel-tricep-press.png", imageClass: "image-fit-right" }
       ]
     },
     {
@@ -230,8 +230,8 @@
       link: "#lead-form-wrap",
       products: [
         { name: "Chest Press", image: "assets/catalog-items/force-chest-press.png" },
-        { name: "45 Degree Leg Press", image: "assets/catalog-items/force-45-degree-leg-press.png", center: true },
-        { name: "Row", image: "assets/catalog-items/force-row.png" }
+        { name: "45 Degree Leg Press", image: "assets/catalog-items/force-45-degree-leg-press.png", center: true, imageClass: "image-shift-left" },
+        { name: "Row", image: "assets/catalog-items/force-row.png", imageClass: "image-fit-right" }
       ]
     }
   ];
@@ -254,7 +254,7 @@
                   (product) => `
                     <div class="series-product${product.center ? " media-center" : ""}">
                       <div class="series-product-image">
-                        <img src="${product.image}" alt="${product.name}" loading="eager" />
+                        <img src="${product.image}" alt="${product.name}" loading="eager" class="${product.imageClass || ""}" />
                       </div>
                       <strong>${product.name}</strong>
                     </div>
@@ -320,7 +320,7 @@
     stopSeriesAutoplay();
     seriesCarouselTimer = window.setInterval(() => {
       setSeriesSlide(seriesSlideIndex + 1);
-    }, 2200);
+    }, 2000);
   }
 
   async function switchHeroVideo(button) {
