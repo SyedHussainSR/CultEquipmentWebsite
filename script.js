@@ -6,6 +6,10 @@
   const heroVideo = document.querySelector(".hero-video");
   const heroSource = heroVideo?.querySelector("source");
   const switchChips = document.querySelectorAll(".switch-chip");
+  const seriesCarousel = document.querySelector("[data-series-carousel]");
+  const seriesCarouselTrack = document.querySelector("#series-carousel-track");
+  const seriesCarouselDots = document.querySelector("#series-carousel-dots");
+  const seriesCarouselLink = document.querySelector("#series-carousel-link");
   const revealTargets = document.querySelectorAll(".reveal");
   const ownerVideos = document.querySelectorAll(".owner-video video");
   const catalogFilterButtons = document.querySelectorAll("[data-catalog-filter]");
@@ -25,6 +29,8 @@
   const quoteStorageKey = "cult-equipment-quote-items";
   const whatsappNumber = "917625030537";
   const defaultWhatsappMessage = "Hey, I have visited the website, Need more info!";
+  let seriesSlideIndex = 0;
+  let seriesCarouselTimer = null;
   const params = new URLSearchParams(window.location.search);
   const trackedParams = [
     "utm_source",
@@ -162,6 +168,159 @@
 
     const activePoster = posterResults.find(({ chip }) => chip.classList.contains("is-active"))?.poster;
     if (heroVideo && activePoster) heroVideo.poster = activePoster;
+  }
+
+  const seriesSlides = [
+    {
+      title: "Cardio Series",
+      link: "#lead-form-wrap",
+      products: [
+        { name: "Commercial Treadmill", image: "assets/catalog-items/cardio-cs-xg-v12.png" },
+        { name: "Recumbent Bike", image: "assets/catalog-items/cardio-recumbent-bike.png", center: true },
+        { name: "CS-XZ8003C", image: "assets/catalog-items/cardio-cs-xz8003c.png" }
+      ]
+    },
+    {
+      title: "Strength Series",
+      link: "#lead-form-wrap",
+      products: [
+        { name: "Squat Rack", image: "assets/catalog-items/strength-squat-rack-cs-xh021.png" },
+        { name: "Functional Trainer", image: "assets/catalog-items/strength-functional-trainer-cs-h005a.png", center: true },
+        { name: "Half Rack", image: "assets/catalog-items/strength-half-rack-cs-g890.png" }
+      ]
+    },
+    {
+      title: "Fusion Series",
+      link: "#lead-form-wrap",
+      products: [
+        { name: "Chest Press", image: "assets/catalog-items/fusion-chest-press-cs-k6-08.png" },
+        { name: "Lat Pull Down", image: "assets/catalog-items/fusion-lat-pull-down-cs-k6-35.png", center: true },
+        { name: "Leg Extension", image: "assets/catalog-items/fusion-leg-extension-cs-k6-02.png" }
+      ]
+    },
+    {
+      title: "Flow Series",
+      link: "#lead-form-wrap",
+      products: [
+        { name: "Dip Chin Assist", image: "assets/catalog-items/flow-assisted-dip-chin.png" },
+        { name: "Shoulder Press", image: "assets/catalog-items/flow-shoulder-press.png", center: true },
+        { name: "Seated Row", image: "assets/catalog-items/flow-seated-row.png" }
+      ]
+    },
+    {
+      title: "Flux Series",
+      link: "#lead-form-wrap",
+      products: [
+        { name: "Chest Press", image: "assets/catalog-items/flux-chest-press.png" },
+        { name: "Dip Chin Assist", image: "assets/catalog-items/flux-dip-chin-assist.png", center: true },
+        { name: "Long Pull", image: "assets/catalog-items/flux-longpull.png" }
+      ]
+    },
+    {
+      title: "Fuel Series",
+      link: "#lead-form-wrap",
+      products: [
+        { name: "Chest Press", image: "assets/catalog-items/fuel-chest-press.png" },
+        { name: "Shoulder Press", image: "assets/catalog-items/fuel-shoulder-press.png", center: true },
+        { name: "Tricep Press", image: "assets/catalog-items/fuel-tricep-press.png" }
+      ]
+    },
+    {
+      title: "Force Series",
+      link: "#lead-form-wrap",
+      products: [
+        { name: "Chest Press", image: "assets/catalog-items/force-chest-press.png" },
+        { name: "45 Degree Leg Press", image: "assets/catalog-items/force-45-degree-leg-press.png", center: true },
+        { name: "Row", image: "assets/catalog-items/force-row.png" }
+      ]
+    }
+  ];
+
+  function renderSeriesCarousel() {
+    if (!seriesCarousel || !seriesCarouselTrack || !seriesCarouselDots) return;
+
+    seriesCarouselTrack.innerHTML = seriesSlides
+      .map(
+        (slide, index) => `
+          <article class="series-carousel-slide${index === 0 ? " is-active" : ""}" data-series-slide="${index}">
+            <div class="series-carousel-label">
+              <p>Collections</p>
+              <h2>${slide.title}</h2>
+              <span aria-hidden="true"></span>
+            </div>
+            <div class="series-carousel-products">
+              ${slide.products
+                .map(
+                  (product) => `
+                    <div class="series-product${product.center ? " media-center" : ""}">
+                      <div class="series-product-image">
+                        <img src="${product.image}" alt="${product.name}" loading="eager" />
+                      </div>
+                      <strong>${product.name}</strong>
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          </article>
+        `
+      )
+      .join("");
+
+    seriesCarouselDots.innerHTML = seriesSlides
+      .map(
+        (slide, index) => `
+          <button
+            class="series-carousel-dot${index === 0 ? " is-active" : ""}"
+            type="button"
+            aria-label="Show ${slide.title}"
+            data-series-dot="${index}"
+          ></button>
+        `
+      )
+      .join("");
+
+    seriesCarouselDots.querySelectorAll("[data-series-dot]").forEach((button) => {
+      button.addEventListener("click", () => {
+        setSeriesSlide(Number(button.dataset.seriesDot || 0));
+        startSeriesAutoplay();
+      });
+    });
+
+    setSeriesSlide(0);
+  }
+
+  function setSeriesSlide(index) {
+    if (!seriesCarouselTrack || !seriesCarouselDots || !seriesSlides.length) return;
+    const normalizedIndex = (index + seriesSlides.length) % seriesSlides.length;
+    seriesSlideIndex = normalizedIndex;
+
+    seriesCarouselTrack.querySelectorAll("[data-series-slide]").forEach((slide) => {
+      slide.classList.toggle("is-active", Number(slide.dataset.seriesSlide) === normalizedIndex);
+    });
+
+    seriesCarouselDots.querySelectorAll("[data-series-dot]").forEach((dot) => {
+      dot.classList.toggle("is-active", Number(dot.dataset.seriesDot) === normalizedIndex);
+    });
+
+    if (seriesCarouselLink) {
+      seriesCarouselLink.href = seriesSlides[normalizedIndex].link;
+    }
+  }
+
+  function stopSeriesAutoplay() {
+    if (seriesCarouselTimer) {
+      window.clearInterval(seriesCarouselTimer);
+      seriesCarouselTimer = null;
+    }
+  }
+
+  function startSeriesAutoplay() {
+    if (!seriesCarousel) return;
+    stopSeriesAutoplay();
+    seriesCarouselTimer = window.setInterval(() => {
+      setSeriesSlide(seriesSlideIndex + 1);
+    }, 3200);
   }
 
   async function switchHeroVideo(button) {
@@ -549,6 +708,8 @@
     closeQuoteDrawer();
   });
   loadQuoteItems();
+  renderSeriesCarousel();
+  startSeriesAutoplay();
   hydrateHeroPosters();
   fillTrackingFields();
   propagateUtms();

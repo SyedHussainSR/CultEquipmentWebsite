@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260616-6" />
+    <link rel="stylesheet" href="styles.css?v=20260622-2" />
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -74,88 +74,22 @@
       </header>
 
       <main id="top">
-        <section class="hero" id="experience">
-          <video
-            class="hero-video"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="auto"
-          >
-            <source src="assets/whole-gym.mp4" type="video/mp4" />
-          </video>
-          <div class="hero-video-overlay"></div>
-          <div class="hero-grid"></div>
-
-          <div class="hero-full">
-            <div class="hero-copy reveal">
-              <p class="hero-kicker">Complete Gym Setup</p>
-              <div class="hero-actions">
-                <a class="button primary" href="#lead-form-wrap">Get Quote</a>
-              </div>
-            </div>
-
-            <div class="hero-bottom reveal">
-              <div class="hero-video-switcher hero-video-switcher-right">
-                <button class="switch-chip is-active" type="button" data-hero-video-target="assets/whole-gym.mp4">Whole Gym</button>
-                <button class="switch-chip" type="button" data-hero-video-target="assets/cardio-section.mp4">Cardio Section</button>
-                <button class="switch-chip" type="button" data-hero-video-target="assets/strength-section.mp4">Strength Section</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section class="equipment-slider-section" id="collections">
           <div class="equipment-slider-shell reveal">
-            <div class="equipment-slider-head">
-              <h2>Collections</h2>
-            </div>
-            <div class="equipment-slider-marquee" aria-label="Equipment types slider">
-              <div class="equipment-slider-track">
-                <article class="equipment-slider-card">
-                  <img src="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/66aca487ee809425e3dfd56f_13th%20Oct%20Cult%20Commercial%20Day%201-2139%202.jpg" alt="Strength equipment" loading="lazy" />
-                  <div class="equipment-slider-overlay">
-                    <p>Strength</p>
-                    <span>Selectorized and plate-loaded systems</span>
-                  </div>
-                </article>
-                <article class="equipment-slider-card">
-                  <img src="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/6874b60409c5e71a963a3ebc_CD1.webp" alt="Cardio equipment" loading="lazy" />
-                  <div class="equipment-slider-overlay">
-                    <p>Cardio</p>
-                    <span>Treadmills, bikes, and ellipticals</span>
-                  </div>
-                </article>
-                <article class="equipment-slider-card">
-                  <img src="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/66b08fdeab65d822c56fa4d1_ai_2nd%20set-4468%201.jpg" alt="Free weights equipment" loading="lazy" />
-                  <div class="equipment-slider-overlay">
-                    <p>Free Weights</p>
-                    <span>Benches, dumbbells, and training essentials</span>
-                  </div>
-                </article>
-                <article class="equipment-slider-card" aria-hidden="true">
-                  <img src="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/66aca487ee809425e3dfd56f_13th%20Oct%20Cult%20Commercial%20Day%201-2139%202.jpg" alt="" loading="lazy" />
-                  <div class="equipment-slider-overlay">
-                    <p>Strength</p>
-                    <span>Selectorized and plate-loaded systems</span>
-                  </div>
-                </article>
-                <article class="equipment-slider-card" aria-hidden="true">
-                  <img src="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/6874b60409c5e71a963a3ebc_CD1.webp" alt="" loading="lazy" />
-                  <div class="equipment-slider-overlay">
-                    <p>Cardio</p>
-                    <span>Treadmills, bikes, and ellipticals</span>
-                  </div>
-                </article>
-                <article class="equipment-slider-card" aria-hidden="true">
-                  <img src="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/66b08fdeab65d822c56fa4d1_ai_2nd%20set-4468%201.jpg" alt="" loading="lazy" />
-                  <div class="equipment-slider-overlay">
-                    <p>Free Weights</p>
-                    <span>Benches, dumbbells, and training essentials</span>
-                  </div>
-                </article>
+            <div class="series-carousel" data-series-carousel>
+              <div class="series-carousel-stage">
+                <div class="series-carousel-ceiling"></div>
+                <div class="series-carousel-beam beam-left"></div>
+                <div class="series-carousel-beam beam-right"></div>
+                <div class="series-carousel-floor"></div>
+                <div class="series-carousel-track" id="series-carousel-track"></div>
               </div>
+
+              <div class="series-carousel-actions">
+                <a class="button ghost light" href="#lead-form-wrap" id="series-carousel-link">Know More</a>
+              </div>
+
+              <div class="series-carousel-dots" id="series-carousel-dots" aria-label="Series carousel navigation"></div>
             </div>
           </div>
         </section>
@@ -315,35 +249,32 @@
           <div class="owner-grid">
             <article class="owner-story reveal">
               <div class="owner-video">
-                <video muted loop playsinline preload="metadata" poster="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/66f5342e6dc448fcda2b5213_Screenshot%202024-09-26%20at%203.43.07%E2%80%AFPM.png">
-                  <source src="https://cdn-media.cure.fit/cultsport/Gym-Videos/Impackt+Fitness.mp4" type="video/mp4" />
+                <video muted loop playsinline preload="metadata">
+                  <source src="assets/ripd.mp4" type="video/mp4" />
                 </video>
               </div>
               <div class="owner-copy">
-                <h3>Rakesh, Gym owner</h3>
-                <p>Personalized equipment guidance matters more when buyers are opening a space for the first time and need confidence, not just options.</p>
+                <h3>RIPD</h3>
               </div>
             </article>
             <article class="owner-story reveal">
               <div class="owner-video">
-                <video muted loop playsinline preload="metadata" poster="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/66f533fb3c07e401feccf4da_Screenshot%202024-09-26%20at%203.42.57%E2%80%AFPM.png">
-                  <source src="https://cdn-media.cure.fit/cultsport/Gym-Videos/GymX+HBR.mp4" type="video/mp4" />
+                <video muted loop playsinline preload="metadata">
+                  <source src="assets/future-fitness.mp4" type="video/mp4" />
                 </video>
               </div>
               <div class="owner-copy">
-                <h3>Murtaza, Gym owner</h3>
-                <p>Quality, finish, and user satisfaction land better when they are shown in motion with the finished space, not buried under generic text blocks.</p>
+                <h3>Future Fitness</h3>
               </div>
             </article>
             <article class="owner-story reveal">
               <div class="owner-video">
-                <video muted loop playsinline preload="metadata" poster="https://cdn.prod.website-files.com/64faf4a5e79a6f225824ad0d/66f533fbaab0b3e40f853c28_Screenshot%202024-09-26%20at%203.42.21%E2%80%AFPM.png">
-                  <source src="https://cdn-media.cure.fit/cultsport/Gym-Videos/Fitness+Culture+(Chattarpur).mp4" type="video/mp4" />
+                <video muted loop playsinline preload="metadata">
+                  <source src="assets/brad-fitness-5-0.mp4" type="video/mp4" />
                 </video>
               </div>
               <div class="owner-copy">
-                <h3>Alex and Manish, Gym owners</h3>
-                <p>Variety becomes believable when the visitor sees an actual operating gym experience instead of a flat testimonial carousel.</p>
+                <h3>Brad Fitness 5.0</h3>
               </div>
             </article>
           </div>
@@ -378,6 +309,6 @@
       </svg>
     </a>
     <a class="mobile-sticky-cta" href="#lead-form-wrap">Request commercial call</a>
-    <script src="script.js?v=20260616-6"></script>
+    <script src="script.js?v=20260622-2"></script>
   </body>
 </html>
