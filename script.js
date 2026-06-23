@@ -193,9 +193,9 @@
       title: "Fusion Series",
       link: "#lead-form-wrap",
       products: [
-        { name: "Chest Press", image: "assets/catalog-items/fusion-chest-press-cs-k6-08.png" },
-        { name: "Lat Pull Down", image: "assets/catalog-items/fusion-lat-pull-down-cs-k6-35.png", center: true },
-        { name: "Leg Extension", image: "assets/catalog-items/fusion-leg-extension-cs-k6-02.png" }
+        { name: "Fusion K608 Chest Press", image: "assets/catalog-items/fusion/fusion-k608-chest-press.png" },
+        { name: "Fusion K635 High Pulley", image: "assets/catalog-items/fusion/fusion-k635-high-pulley.png", center: true },
+        { name: "Fusion K602 Seated Leg Extension", image: "assets/catalog-items/fusion/fusion-k602-seated-leg-extension.png" }
       ]
     },
     {

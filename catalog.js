@@ -16,7 +16,7 @@
   const quoteCloseButton = document.querySelector("#quote-close");
   const quoteGoFormLinks = document.querySelectorAll("[data-quote-go-form]");
   const whatsappFloat = document.querySelector(".whatsapp-float");
-  const assetVersion = "20260616-3";
+  const assetVersion = "20260623-1";
   const quoteStorageKey = "cult-equipment-quote-items";
   const quoteItems = [];
   const whatsappNumber = "917625030537";
@@ -66,11 +66,20 @@
     { title: "Squat Rack CS-XH021", code: "Strength | Racks + Stations", category: "strength", subcategory: "racks-stations", series: "", image: "assets/catalog-items/strength-squat-rack-cs-xh021.png", description: "Commercial squat rack for free-weight and barbell training zones." },
     { title: "Functional Trainer CS-H005A", code: "Strength | Functional Training", category: "strength", subcategory: "functional-training", series: "", image: "assets/catalog-items/strength-functional-trainer-cs-h005a.png", description: "Dual-column functional training station for cable-based movement work." },
     { title: "Half Rack CS-G890", code: "Strength | Racks + Stations", category: "strength", subcategory: "racks-stations", series: "", image: "assets/catalog-items/strength-half-rack-cs-g890.png", description: "Commercial half rack for compact barbell training setups." },
-    { title: "Fusion Chest Press CS-K6-08", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion-chest-press-cs-k6-08.png", description: "Fusion Series chest press from the 2025 commercial catalog." },
-    { title: "Fusion Shoulder Press CS-K6-06", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion-shoulder-press-cs-k6-06.png", description: "Fusion Series shoulder press with dedicated product visual." },
-    { title: "Fusion Pec Fly & Rear Delt CS-K6-07", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion-pec-fly-rear-delt-cs-k6-07.png", description: "Fusion Series dual-function chest and rear-delt machine." },
-    { title: "Fusion Lat Pull Down CS-K6-35", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion-lat-pull-down-cs-k6-35.png", description: "Fusion Series lat pull down for back-focused selectorized training." },
-    { title: "Fusion Leg Extension CS-K6-02", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion-leg-extension-cs-k6-02.png", description: "Fusion Series leg extension with isolated quad focus." },
+    { title: "Fusion K601 Horizontal Leg Curl", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k601-horizontal-leg-curl.png", description: "Fusion Series horizontal leg curl for hamstring-focused training." },
+    { title: "Fusion K602 Seated Leg Extension", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k602-seated-leg-extension.png", description: "Fusion Series seated leg extension for isolated quad work." },
+    { title: "Fusion K606 Shoulder Press", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k606-shoulder-press.png", description: "Fusion Series shoulder press for controlled upper-body pressing." },
+    { title: "Fusion K607 Chest Fly Rear Delt", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k607-chest-fly-rear-delt.png", description: "Fusion Series dual-function chest fly and rear delt machine." },
+    { title: "Fusion K608 Chest Press", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k608-chest-press.png", description: "Fusion Series chest press for guided commercial strength floors." },
+    { title: "Fusion K609 Assist Dip Chin", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k609-assist-dip-chin.png", description: "Fusion Series assisted dip and chin station." },
+    { title: "Fusion K623 Seated Leg Curl", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k623-seated-leg-curl.png", description: "Fusion Series seated leg curl for hamstring isolation." },
+    { title: "Fusion K634 Seated Row", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k634-seated-row.png", description: "Fusion Series seated row for back and pulling strength." },
+    { title: "Fusion K635 High Pulley", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k635-high-pulley.png", description: "Fusion Series high pulley for lat and cable training." },
+    { title: "Fusion K681 High PulleyRow Single Handle", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k681-high-pulleyrow-single-handle.png", description: "Fusion Series high pulley row with single-handle movement." },
+    { title: "Fusion K682 Multipress Chest and Shoulder", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k682-multipress-chest-and-shoulder.png", description: "Fusion Series multipress for chest and shoulder training." },
+    { title: "Fusion K683 Abductor & Adductor", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k683-abductor-adductor.png", description: "Fusion Series abductor and adductor station for hip training." },
+    { title: "Fusion K684A Leg Curl Extension", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k684a-leg-curl-extension.png", description: "Fusion Series leg curl and extension combination machine." },
+    { title: "Fusion K685 Biceps Triceps", code: "Strength | Fusion Series", category: "strength", subcategory: "selectorized-series", series: "fusion-series", image: "assets/catalog-items/fusion/fusion-k685-biceps-triceps.png", description: "Fusion Series biceps and triceps machine for arm training." },
     { title: "Flow Chest Press CS-M1-001", code: "Strength | Flow Series", category: "strength", subcategory: "selectorized-series", series: "flow-series", image: "assets/catalog-items/flow-chest-press.png", description: "Flow Series chest press with aviation-grade cable-led selectorized design." },
     { title: "Flow Shoulder Press CS-M1-003", code: "Strength | Flow Series", category: "strength", subcategory: "selectorized-series", series: "flow-series", image: "assets/catalog-items/flow-shoulder-press.png", description: "Flow Series shoulder press from the commercial catalog extract." },
     { title: "Flow Seated Row CS-M1-004", code: "Strength | Flow Series", category: "strength", subcategory: "selectorized-series", series: "flow-series", image: "assets/catalog-items/flow-seated-row.png", description: "Flow Series seated row with dedicated product render." },
@@ -90,7 +99,8 @@
   ];
 
   function withVersion(path) {
-    return `${path}?v=${assetVersion}`;
+    const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+    return `${encodedPath}?v=${assetVersion}`;
   }
 
   function escapeHtml(value) {
