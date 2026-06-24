@@ -1904,25 +1904,34 @@ select:focus {
   }
 
   .consult-copy {
-    gap: 14px;
-    padding: 4px 0 0;
+    gap: 12px;
+    padding: 10px 0 0;
   }
 
   .consult-intro {
-    gap: 8px;
-    font-size: 0.66rem;
-    letter-spacing: 0.1em;
-    max-width: 280px;
+    display: inline-grid;
+    width: fit-content;
+    max-width: 252px;
+    gap: 6px;
+    padding: 0 0 2px;
+    color: var(--warning);
+    font-size: 0.58rem;
+    line-height: 1.25;
+    letter-spacing: 0.08em;
   }
 
   .consult-intro::before {
-    flex-basis: 24px;
+    width: 54px;
+    height: 2px;
+    flex-basis: auto;
+    background: linear-gradient(90deg, var(--focus), var(--warning));
   }
 
   .consult-copy h2 {
     max-width: 280px;
-    font-size: 2.45rem;
-    line-height: 0.92;
+    font-size: 2.28rem;
+    line-height: 0.9;
+    letter-spacing: -0.075em;
   }
 
   .consult-stats {
@@ -2044,12 +2053,13 @@ select:focus {
   }
 
   .consult-bar {
-    gap: 12px;
-    margin-bottom: 24px;
+    gap: 16px;
+    margin-top: 18px;
+    margin-bottom: 28px;
   }
 
   .consult-copy {
-    gap: 12px;
+    gap: 14px;
     padding-top: 0;
   }
 
