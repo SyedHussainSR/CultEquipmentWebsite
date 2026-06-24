@@ -223,6 +223,23 @@ select {
   pointer-events: none;
 }
 
+.hero-video-only {
+  min-height: 100svh;
+  padding: 0;
+  background: var(--inverse);
+}
+
+.hero-video-only .hero-video {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.hero-video-only .hero-video-overlay {
+  background:
+    linear-gradient(180deg, rgba(27, 28, 32, 0.08) 0%, rgba(27, 28, 32, 0.18) 52%, rgba(27, 28, 32, 0.58) 100%),
+    linear-gradient(90deg, rgba(27, 28, 32, 0.22), rgba(27, 28, 32, 0.02), rgba(27, 28, 32, 0.2));
+}
+
 .hero-grid {
   display: none;
 }
@@ -411,6 +428,15 @@ h3 {
   padding: 92px 20px 0;
   background:
     linear-gradient(180deg, rgba(27, 28, 32, 0.96), rgba(27, 28, 32, 0.84));
+}
+
+.operators .equipment-slider-section {
+  padding: 36px 0 42px;
+  background: transparent;
+}
+
+.operators .equipment-slider-shell {
+  width: 100%;
 }
 
 .equipment-slider-shell {
@@ -1773,9 +1799,18 @@ select:focus {
     padding: 0 16px;
   }
 
+  .hero-video-only {
+    min-height: 100svh;
+    padding: 0;
+  }
+
   .equipment-slider-section {
     min-height: 0;
     padding: 72px 12px 26px;
+  }
+
+  .operators .equipment-slider-section {
+    padding: 24px 0 30px;
   }
 
   .series-carousel-stage {

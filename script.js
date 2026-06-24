@@ -181,9 +181,9 @@
       title: "Strength Series",
       link: "#lead-form-wrap",
       products: [
-        { name: "Squat Rack", image: "assets/catalog-items/strength-squat-rack-cs-xh021.png" },
+        { name: "Fusion K606 Shoulder Press", image: "assets/catalog-items/fusion/fusion-k606-shoulder-press.png" },
         { name: "Functional Trainer", image: "assets/catalog-items/strength-functional-trainer-cs-h005a.png", center: true },
-        { name: "Half Rack", image: "assets/catalog-items/strength-half-rack-cs-g890.png" }
+        { name: "Fusion Chest Press", image: "assets/catalog-items/fusion/fusion-k608-chest-press.png" }
       ]
     },
     {
