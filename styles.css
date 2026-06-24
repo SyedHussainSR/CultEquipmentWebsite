@@ -2639,19 +2639,20 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 128px;
-  overflow: hidden;
-  padding: 6px 8px 0;
+  height: 166px;
+  overflow: visible;
+  padding: 8px 10px 0;
   background: var(--page);
 }
 
 .catalog-result-media img {
   width: auto;
-  max-width: 100%;
-  height: 150px;
+  max-width: 94%;
+  max-height: 152px;
+  height: auto;
   object-fit: contain;
   object-position: center;
-  transform: scale(1.32);
+  transform: none;
   transform-origin: center center;
 }
 
@@ -2666,7 +2667,7 @@ select:focus {
   grid-template-rows: auto;
   align-content: start;
   gap: 5px;
-  padding: 8px 12px 10px;
+  padding: 6px 12px 10px;
 }
 
 .catalog-result-kicker {
@@ -2784,18 +2785,20 @@ select:focus {
   }
 
   .catalog-result-media {
-    min-height: 124px;
-    padding: 4px 8px 0;
+    height: 176px;
+    padding: 8px 10px 0;
   }
 
   .catalog-result-media img {
-    height: 150px;
-    transform: scale(1.38);
+    max-width: 92%;
+    max-height: 164px;
+    height: auto;
+    transform: none;
   }
 
   .catalog-result-copy {
     gap: 4px;
-    padding: 7px 10px 10px;
+    padding: 4px 10px 10px;
   }
 
   .catalog-result-copy > p:not(.catalog-result-kicker) {
