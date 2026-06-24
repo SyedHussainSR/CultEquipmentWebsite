@@ -8,7 +8,6 @@
   const switchChips = document.querySelectorAll(".switch-chip");
   const seriesCarousel = document.querySelector("[data-series-carousel]");
   const seriesCarouselTrack = document.querySelector("#series-carousel-track");
-  const seriesCarouselDots = document.querySelector("#series-carousel-dots");
   const seriesCarouselLink = document.querySelector("#series-carousel-link");
   const revealTargets = document.querySelectorAll(".reveal");
   const ownerVideos = document.querySelectorAll(".owner-video video");
@@ -29,8 +28,6 @@
   const quoteStorageKey = "cult-equipment-quote-items";
   const whatsappNumber = "917625030537";
   const defaultWhatsappMessage = "Hey, I have visited the website, Need more info!";
-  let seriesSlideIndex = 0;
-  let seriesCarouselTimer = null;
   const params = new URLSearchParams(window.location.search);
   const trackedParams = [
     "utm_source",
@@ -237,12 +234,13 @@
   ];
 
   function renderSeriesCarousel() {
-    if (!seriesCarousel || !seriesCarouselTrack || !seriesCarouselDots) return;
+    if (!seriesCarousel || !seriesCarouselTrack) return;
 
-    seriesCarouselTrack.innerHTML = seriesSlides
+    const marqueeSlides = [...seriesSlides, ...seriesSlides];
+    seriesCarouselTrack.innerHTML = marqueeSlides
       .map(
         (slide, index) => `
-          <article class="series-carousel-slide${index === 0 ? " is-active" : ""}" data-series-slide="${index}">
+          <article class="series-carousel-slide" data-series-slide="${index}">
             <div class="series-carousel-label">
               <p>Collections</p>
               <h2>${slide.title}</h2>
@@ -267,60 +265,9 @@
       )
       .join("");
 
-    seriesCarouselDots.innerHTML = seriesSlides
-      .map(
-        (slide, index) => `
-          <button
-            class="series-carousel-dot${index === 0 ? " is-active" : ""}"
-            type="button"
-            aria-label="Show ${slide.title}"
-            data-series-dot="${index}"
-          ></button>
-        `
-      )
-      .join("");
-
-    seriesCarouselDots.querySelectorAll("[data-series-dot]").forEach((button) => {
-      button.addEventListener("click", () => {
-        setSeriesSlide(Number(button.dataset.seriesDot || 0));
-        startSeriesAutoplay();
-      });
-    });
-
-    setSeriesSlide(0);
-  }
-
-  function setSeriesSlide(index) {
-    if (!seriesCarouselTrack || !seriesCarouselDots || !seriesSlides.length) return;
-    const normalizedIndex = (index + seriesSlides.length) % seriesSlides.length;
-    seriesSlideIndex = normalizedIndex;
-
-    seriesCarouselTrack.querySelectorAll("[data-series-slide]").forEach((slide) => {
-      slide.classList.toggle("is-active", Number(slide.dataset.seriesSlide) === normalizedIndex);
-    });
-
-    seriesCarouselDots.querySelectorAll("[data-series-dot]").forEach((dot) => {
-      dot.classList.toggle("is-active", Number(dot.dataset.seriesDot) === normalizedIndex);
-    });
-
     if (seriesCarouselLink) {
-      seriesCarouselLink.href = seriesSlides[normalizedIndex].link;
+      seriesCarouselLink.href = "#lead-form-wrap";
     }
-  }
-
-  function stopSeriesAutoplay() {
-    if (seriesCarouselTimer) {
-      window.clearInterval(seriesCarouselTimer);
-      seriesCarouselTimer = null;
-    }
-  }
-
-  function startSeriesAutoplay() {
-    if (!seriesCarousel) return;
-    stopSeriesAutoplay();
-    seriesCarouselTimer = window.setInterval(() => {
-      setSeriesSlide(seriesSlideIndex + 1);
-    }, 2000);
   }
 
   async function switchHeroVideo(button) {
@@ -709,7 +656,6 @@
   });
   loadQuoteItems();
   renderSeriesCarousel();
-  startSeriesAutoplay();
   hydrateHeroPosters();
   fillTrackingFields();
   propagateUtms();

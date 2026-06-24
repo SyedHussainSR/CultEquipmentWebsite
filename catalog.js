@@ -320,20 +320,20 @@
 
     resultsGrid.style.display = "grid";
     resultsGrid.style.justifyContent = "center";
-    resultsGrid.style.gap = window.innerWidth <= 720 ? "16px" : "12px";
+    resultsGrid.style.gap = window.innerWidth <= 720 ? "12px" : "12px";
 
     if (window.innerWidth <= 720) {
       resultsGrid.style.gridTemplateColumns = "1fr";
     } else if (window.innerWidth <= 1100) {
       resultsGrid.style.gridTemplateColumns = "repeat(2, minmax(0, 1fr))";
     } else {
-      resultsGrid.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 300px))";
+      resultsGrid.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 280px))";
     }
 
     clearButton.style.display = state.type === "all" ? "none" : "inline-flex";
 
     resultsGrid.querySelectorAll(".catalog-result-card").forEach((card) => {
-      card.style.maxWidth = window.innerWidth <= 1100 ? "none" : "300px";
+      card.style.maxWidth = window.innerWidth <= 1100 ? "none" : "280px";
       card.style.width = "100%";
     });
   }
