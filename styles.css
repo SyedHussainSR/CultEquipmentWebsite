@@ -351,6 +351,7 @@ select {
 }
 
 .hero-video-only {
+  position: relative;
   min-height: 100svh;
   padding: 0;
   background: var(--inverse);
@@ -365,6 +366,21 @@ select {
   background:
     linear-gradient(180deg, rgba(27, 28, 32, 0.08) 0%, rgba(27, 28, 32, 0.18) 52%, rgba(27, 28, 32, 0.58) 100%),
     linear-gradient(90deg, rgba(27, 28, 32, 0.22), rgba(27, 28, 32, 0.02), rgba(27, 28, 32, 0.2));
+}
+
+.hero-video-only::after {
+  content: "";
+  position: absolute;
+  top: clamp(76px, 12vh, 132px);
+  left: clamp(28px, 6vw, 118px);
+  z-index: 2;
+  width: clamp(76px, 8vw, 132px);
+  height: clamp(58px, 7vw, 116px);
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(27, 28, 32, 0.62) 0%, rgba(27, 28, 32, 0.5) 36%, rgba(27, 28, 32, 0) 72%);
+  filter: blur(10px);
 }
 
 .hero-grid {
@@ -1935,6 +1951,14 @@ select:focus {
 
   .hero-video-only .hero-video {
     object-position: center center;
+  }
+
+  .hero-video-only::after {
+    top: 58px;
+    left: 20px;
+    width: 82px;
+    height: 68px;
+    filter: blur(12px);
   }
 
   .equipment-slider-section {
