@@ -1800,8 +1800,14 @@ select:focus {
   }
 
   .hero-video-only {
-    min-height: 100svh;
+    min-height: 58svh;
+    height: 58svh;
+    max-height: 440px;
     padding: 0;
+  }
+
+  .hero-video-only .hero-video {
+    object-position: center center;
   }
 
   .equipment-slider-section {
