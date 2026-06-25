@@ -386,11 +386,8 @@
 
   function updateWhatsappLink() {
     if (!whatsappFloat) return;
-    if (quoteItems.length) {
-      whatsappFloat.href = "#lead-form-wrap";
-      return;
-    }
-    whatsappFloat.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildWhatsappMessage())}`;
+    whatsappFloat.href = "#lead-form-wrap";
+    whatsappFloat.setAttribute("aria-label", "Fill the form before WhatsApp");
   }
 
   function saveQuoteItems() {

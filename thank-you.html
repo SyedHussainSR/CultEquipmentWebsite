@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260625-2" />
+    <link rel="stylesheet" href="styles.css?v=20260625-3" />
   </head>
   <body class="thank-you-page">
     <div class="page-shell">
@@ -33,6 +33,7 @@
 
       <main class="thank-you-main">
         <section class="thank-you-card">
+          <div class="thank-you-mark" aria-hidden="true">&check;</div>
           <p class="consult-intro">Thank you for your enquiry</p>
           <h1>Our Sales Representative will get back to you soon</h1>
           <p>
@@ -42,11 +43,17 @@
             Your selected equipment list is opening in WhatsApp. If it does not open, tap the WhatsApp button below.
           </p>
           <div class="thank-you-actions">
+            <a
+              class="button primary thank-you-whatsapp"
+              id="thank-you-whatsapp"
+              href="https://wa.me/917625030537?text=Hey%2C%20I%20have%20visited%20the%20website%20and%20filled%20form%2C%20Need%20more%20info%21"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Message on WhatsApp
+            </a>
             <a class="button primary" href="index.html">Back to Home</a>
             <a class="button ghost" href="catalog.html">View Catalog</a>
-            <a class="button ghost thank-you-whatsapp" id="thank-you-whatsapp" href="#" target="_blank" rel="noopener noreferrer" hidden>
-              Send Equipment List
-            </a>
           </div>
         </section>
       </main>
@@ -67,7 +74,7 @@
         var note = document.getElementById("thank-you-whatsapp-note");
         if (link) {
           link.href = whatsappUrl;
-          link.hidden = false;
+          link.textContent = "Send Equipment List";
         }
         if (note) note.hidden = false;
 
