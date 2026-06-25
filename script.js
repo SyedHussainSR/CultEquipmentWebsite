@@ -355,7 +355,7 @@
 
     const lines = quoteItems.map((item) => `- ${item.name} x${item.qty}`);
     return [
-      defaultWhatsappMessage,
+      "Please submit the form to send your selected equipment quote.",
       "",
       "Selected equipment:",
       ...lines
@@ -386,6 +386,10 @@
 
   function updateWhatsappLink() {
     if (!whatsappFloat) return;
+    if (quoteItems.length) {
+      whatsappFloat.href = "#lead-form-wrap";
+      return;
+    }
     whatsappFloat.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildWhatsappMessage())}`;
   }
 
@@ -554,6 +558,7 @@
     }
 
     phone.value = normalizeIndianPhone(phone.value);
+    syncSelectedProductsField();
     const payload = getPayload(form);
     const quoteSnapshot = quoteItems.map((item) => ({
       name: item.name,
@@ -562,17 +567,10 @@
     }));
     const endpoint = window.CULTSPORT_LEAD_ENDPOINT || form.dataset.endpoint || "";
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildSubmittedLeadWhatsappMessage(payload, quoteSnapshot))}`;
-    let whatsappWindow = null;
 
     submit.disabled = true;
     submit.textContent = "Sending...";
     setStatus("Sending your request to the team.", "");
-
-    try {
-      whatsappWindow = window.open("", "_blank", "noopener");
-    } catch {
-      whatsappWindow = null;
-    }
 
     try {
       if (endpoint) {
@@ -584,10 +582,13 @@
       window.dataLayer?.push({ event: "lead_form_submit", leadIntent: payload["Lead-Intent"], budget: payload["Gym-Opening-Budget"] });
       if (typeof window.gtag_report_conversion === "function") window.gtag_report_conversion();
 
-      if (whatsappWindow) {
-        whatsappWindow.location.replace(whatsappUrl);
-      } else {
-        window.open(whatsappUrl, "_blank", "noopener");
+      if (quoteSnapshot.length) {
+        try {
+          window.sessionStorage.setItem("cult-equipment-pending-whatsapp", whatsappUrl);
+        } catch {
+          window.location.href = whatsappUrl;
+          return;
+        }
       }
 
       form.reset();
@@ -595,11 +596,8 @@
       updateQuoteUi();
       closeQuoteDrawer();
       fillTrackingFields();
-      setStatus(endpoint ? "Thanks. The team will call you shortly. WhatsApp is opening with your equipment list." : "Thanks. Form is ready; WhatsApp is opening with your equipment list.", "success");
+      window.location.href = "thank-you.html";
     } catch (error) {
-      if (whatsappWindow && !whatsappWindow.closed) {
-        whatsappWindow.close();
-      }
       console.error(error);
       setStatus("Something went wrong. Please try again in a moment.", "error");
     } finally {

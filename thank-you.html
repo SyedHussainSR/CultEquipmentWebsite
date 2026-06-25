@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thank You | cult equipment</title>
+    <meta
+      name="description"
+      content="Thank you for submitting your cult equipment commercial gym setup enquiry."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260625-2" />
+  </head>
+  <body class="thank-you-page">
+    <div class="page-shell">
+      <header class="site-header is-scrolled" data-header>
+        <a class="brand" href="index.html" aria-label="cult equipment">
+          <img src="assets/cult-equipment-logo.png" alt="cult equipment" />
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="index.html#collections">Collections</a>
+          <a class="nav-link" href="index.html#packages">Packages</a>
+          <a class="nav-link" href="index.html#owners">Projects</a>
+          <a class="nav-link" href="catalog.html">Catalog</a>
+        </nav>
+        <a class="nav-cta" href="index.html#lead-form-wrap">Request a call</a>
+      </header>
+
+      <main class="thank-you-main">
+        <section class="thank-you-card">
+          <p class="consult-intro">Thank you for your enquiry</p>
+          <h1>Our Sales Representative will get back to you soon</h1>
+          <p>
+            Your gym setup details have been shared with the commercial team.
+          </p>
+          <p class="thank-you-whatsapp-note" id="thank-you-whatsapp-note" hidden>
+            Your selected equipment list is opening in WhatsApp. If it does not open, tap the WhatsApp button below.
+          </p>
+          <div class="thank-you-actions">
+            <a class="button primary" href="index.html">Back to Home</a>
+            <a class="button ghost" href="catalog.html">View Catalog</a>
+            <a class="button ghost thank-you-whatsapp" id="thank-you-whatsapp" href="#" target="_blank" rel="noopener noreferrer" hidden>
+              Send Equipment List
+            </a>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script>
+      (function () {
+        var whatsappUrl = "";
+        try {
+          whatsappUrl = window.sessionStorage.getItem("cult-equipment-pending-whatsapp") || "";
+          window.sessionStorage.removeItem("cult-equipment-pending-whatsapp");
+        } catch {
+          whatsappUrl = "";
+        }
+
+        if (!whatsappUrl) return;
+
+        var link = document.getElementById("thank-you-whatsapp");
+        var note = document.getElementById("thank-you-whatsapp-note");
+        if (link) {
+          link.href = whatsappUrl;
+          link.hidden = false;
+        }
+        if (note) note.hidden = false;
+
+        window.setTimeout(function () {
+          window.location.href = whatsappUrl;
+        }, 900);
+      })();
+    </script>
+  </body>
+</html>

@@ -195,7 +195,7 @@
 
     const lines = quoteItems.map((item) => `- ${item.name} x${item.qty}`);
     return [
-      defaultWhatsappMessage,
+      "Please submit the form to send your selected equipment quote.",
       "",
       "Selected equipment:",
       ...lines
@@ -204,6 +204,10 @@
 
   function updateWhatsappLink() {
     if (!whatsappFloat) return;
+    if (quoteItems.length) {
+      whatsappFloat.href = "index.html#lead-form-wrap";
+      return;
+    }
     whatsappFloat.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildWhatsappMessage())}`;
   }
 
