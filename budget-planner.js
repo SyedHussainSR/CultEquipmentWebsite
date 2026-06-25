@@ -7,7 +7,6 @@
   const cardioTotal = document.querySelector("#planner-cardio-total");
   const strengthTotal = document.querySelector("#planner-strength-total");
   const addQuoteButton = document.querySelector("#planner-add-quote");
-  const note = document.querySelector("#planner-note");
   const navToggle = document.querySelector("[data-nav-toggle]");
   const navMenu = document.querySelector("[data-nav-menu]");
   const header = document.querySelector("[data-header]");
@@ -198,12 +197,6 @@
     renderItems(strengthItems, strengthList);
     cardioTotal.textContent = formatCurrency(totalSpend(plan.cardio.items));
     strengthTotal.textContent = formatCurrency(totalSpend(strengthList));
-
-    const hasRower = equipment.some((item) => item.family === "rower");
-    note.innerHTML = `
-      <strong>Planning rule applied:</strong> 40% cardio, 60% strength, and strength split into 2 parts pin-loaded plus 1 part plate-loaded.
-      ${hasRower ? "" : "<br />Rower pricing was not available in the shared price/catalog data, so cardio allocation uses treadmills, ellipticals, and bikes."}
-    `;
 
     output.hidden = false;
     output.scrollIntoView({ behavior: "smooth", block: "start" });

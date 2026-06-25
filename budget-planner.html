@@ -41,9 +41,6 @@
           <div>
             <p class="consult-intro">Equipment Budget Planner</p>
             <h1>Build a gym equipment plan from your budget.</h1>
-            <p>
-              Enter your total budget and available square feet. The planner follows a 40% cardio and 60% strength split, with strength divided 2:1 between pin-loaded and plate-loaded equipment.
-            </p>
           </div>
           <form class="planner-card" id="budget-planner-form">
             <label>
@@ -55,7 +52,6 @@
               <input id="planner-sqft" name="sqft" type="number" min="100" step="50" placeholder="Example: 1200" required />
             </label>
             <button class="button primary" type="submit">Create Plan</button>
-            <p>Price references come from the shared 3P and BP pricing files.</p>
           </form>
         </section>
 
@@ -69,12 +65,6 @@
           </div>
 
           <div class="planner-summary-grid" id="planner-summary"></div>
-
-          <div class="planner-rule-strip">
-            <span>Cardio 40%</span>
-            <span>Strength 60%</span>
-            <span>Pin Loaded : Plate Loaded = 2:1</span>
-          </div>
 
           <div class="planner-columns">
             <article class="planner-list-card">
@@ -94,7 +84,6 @@
             </article>
           </div>
 
-          <div class="planner-note" id="planner-note"></div>
         </section>
       </main>
 
@@ -103,6 +92,6 @@
       </footer>
     </div>
 
-    <script src="budget-planner.js?v=20260625-1"></script>
+    <script src="budget-planner.js?v=20260625-2"></script>
   </body>
 </html>
