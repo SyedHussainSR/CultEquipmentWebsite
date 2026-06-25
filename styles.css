@@ -69,24 +69,25 @@ select {
   min-height: 100svh;
   display: grid;
   place-items: center;
-  padding: 140px clamp(18px, 4vw, 52px) 64px;
+  padding: 122px clamp(18px, 4vw, 52px) 52px;
   background:
-    radial-gradient(circle at 18% 22%, rgba(78, 198, 239, 0.16), transparent 28%),
-    radial-gradient(circle at 82% 14%, rgba(247, 68, 128, 0.14), transparent 28%),
-    linear-gradient(180deg, rgba(27, 28, 32, 0.98), rgba(48, 48, 58, 0.96));
+    radial-gradient(circle at 18% 20%, rgba(78, 198, 239, 0.14), transparent 30%),
+    radial-gradient(circle at 82% 16%, rgba(247, 68, 128, 0.12), transparent 30%),
+    radial-gradient(circle at 50% 88%, rgba(243, 182, 0, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(27, 28, 32, 0.99), rgba(34, 34, 42, 0.98));
 }
 
 .thank-you-card {
   position: relative;
-  width: min(840px, 100%);
-  padding: clamp(30px, 5.6vw, 66px);
+  width: min(760px, 100%);
+  padding: clamp(26px, 4.2vw, 48px);
   overflow: hidden;
   border: 1px solid rgba(250, 249, 245, 0.14);
-  border-radius: 38px;
+  border-radius: 32px;
   background:
-    linear-gradient(135deg, rgba(250, 249, 245, 0.08), transparent 32%),
-    linear-gradient(145deg, rgba(48, 48, 58, 0.78), rgba(27, 28, 32, 0.96));
-  box-shadow: 0 34px 120px rgba(0, 0, 0, 0.44);
+    linear-gradient(135deg, rgba(250, 249, 245, 0.07), transparent 34%),
+    linear-gradient(145deg, rgba(48, 48, 58, 0.72), rgba(27, 28, 32, 0.98));
+  box-shadow: 0 28px 86px rgba(0, 0, 0, 0.42);
   text-align: center;
   backdrop-filter: blur(22px);
 }
@@ -94,51 +95,67 @@ select {
 .thank-you-card::before {
   content: "";
   position: absolute;
-  inset: 18px;
+  inset: 14px;
   pointer-events: none;
   border: 1px solid rgba(250, 249, 245, 0.08);
-  border-radius: 28px;
+  border-radius: 24px;
 }
 
 .thank-you-mark {
   display: grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 20px;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 18px;
   border-radius: 999px;
   color: var(--inverse);
   background: linear-gradient(135deg, var(--focus), var(--warning));
-  box-shadow: 0 16px 46px rgba(78, 198, 239, 0.22);
-  font-size: 1.7rem;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3);
+  font-size: 1.45rem;
   font-weight: 900;
 }
 
+.thank-you-card .consult-intro {
+  font-size: clamp(0.82rem, 1vw, 0.96rem);
+  letter-spacing: 0.22em;
+}
+
 .thank-you-card h1 {
-  max-width: 720px;
-  margin: 10px auto 18px;
-  font-size: clamp(2.2rem, 4.8vw, 4.7rem);
-  line-height: 1.02;
-  letter-spacing: -0.075em;
+  max-width: 660px;
+  margin: 12px auto 16px;
+  font-family: "Space Grotesk", "Aptos Display", sans-serif;
+  font-size: clamp(2rem, 3.6vw, 3.65rem);
+  line-height: 1.05;
+  letter-spacing: -0.06em;
 }
 
 .thank-you-card p {
-  max-width: 560px;
+  max-width: 520px;
   margin: 0 auto;
   color: var(--muted);
-  font-size: clamp(1rem, 1.25vw, 1.16rem);
+  font-size: clamp(0.95rem, 1.08vw, 1.06rem);
+  line-height: 1.55;
 }
 
 .thank-you-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
-  margin-top: 30px;
+  gap: 10px;
+  margin-top: 26px;
 }
 
 .thank-you-actions .button {
-  min-width: 190px;
+  min-width: 172px;
+  min-height: 48px;
+  padding-inline: 22px;
+  font-size: 0.78rem;
+}
+
+.thank-you-actions .thank-you-whatsapp {
+  background: var(--success);
+  color: var(--page);
+  box-shadow: 0 16px 38px rgba(31, 157, 107, 0.22);
 }
 
 .thank-you-actions .button.primary + .button.primary {
@@ -156,29 +173,29 @@ select {
 
 @media (max-width: 720px) {
   .thank-you-main {
-    padding: 116px 14px 34px;
+    padding: 104px 14px 30px;
   }
 
   .thank-you-card {
-    padding: 30px 18px 24px;
-    border-radius: 28px;
+    padding: 26px 17px 22px;
+    border-radius: 26px;
   }
 
   .thank-you-card::before {
     inset: 10px;
-    border-radius: 22px;
+    border-radius: 20px;
   }
 
   .thank-you-mark {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 16px;
-    font-size: 1.35rem;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 14px;
+    font-size: 1.2rem;
   }
 
   .thank-you-card h1 {
-    font-size: clamp(2.05rem, 12vw, 3.1rem);
-    letter-spacing: -0.08em;
+    font-size: clamp(1.85rem, 9.6vw, 2.55rem);
+    letter-spacing: -0.065em;
   }
 
   .thank-you-actions {
