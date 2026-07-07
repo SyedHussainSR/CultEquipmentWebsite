@@ -19,7 +19,7 @@
     { name: "Commercial Treadmill CS-V6", meta: "Cardio | Treadmill", group: "cardio", family: "treadmill", price: 128000, sqft: 65, image: "assets/catalog-items/cardio-cs-v6.png" },
     { name: "Commercial Treadmill XZ-T919", meta: "Cardio | Treadmill", group: "cardio", family: "treadmill", price: 105000, sqft: 65, image: "assets/catalog-items/cardio-cs-t919.png" },
     { name: "Commercial Treadmill CS-XZ8001S", meta: "Cardio | Treadmill", group: "cardio", family: "treadmill", price: 99000, sqft: 65, image: "assets/catalog-items/cardio-cs-xz8001s.png" },
-    { name: "Curved Treadmill CS-XZ8003C", meta: "Cardio | Treadmill", group: "cardio", family: "treadmill", price: 85000, sqft: 70, image: "assets/catalog-items/cardio-cs-xz8003c.png" },
+    { name: "Curved Treadmill CS-XZ8003C", meta: "Cardio | Treadmill", group: "cardio", family: "treadmill", kind: "curved", price: 85000, sqft: 70, image: "assets/catalog-items/cardio-cs-xz8003c.png" },
     { name: "Elliptical CS-E12", meta: "Cardio | Elliptical", group: "cardio", family: "elliptical", price: 108000, sqft: 45, image: "assets/catalog-items/cardio-cs-e12-v5.png" },
     { name: "Elliptical CS-E17", meta: "Cardio | Elliptical", group: "cardio", family: "elliptical", price: 89000, sqft: 45, image: "assets/catalog-items/cardio-cs-e17.png" },
     { name: "Recumbent Bike CS-R11", meta: "Cardio | Bike", group: "cardio", family: "bike", price: 72500, sqft: 38, image: "assets/catalog-items/cardio-recumbent-bike.png" },
@@ -107,6 +107,58 @@
     return bucket;
   }
 
+  function getPreferredTreadmills(pool, sqft) {
+    const treadmills = pool.filter((item) => item.family === "treadmill");
+    const allowed = sqft < 2000
+      ? treadmills.filter((item) => item.kind !== "curved")
+      : treadmills;
+    const preferredNames = sqft > 2000
+      ? ["Commercial Treadmill CS-XG-V12E", "Commercial Treadmill CS-V6", "Commercial Treadmill XZ-T919", "Commercial Treadmill CS-XZ8001S", "Curved Treadmill CS-XZ8003C"]
+      : ["Commercial Treadmill CS-V6", "Commercial Treadmill XZ-T919", "Commercial Treadmill CS-XZ8001S", "Commercial Treadmill CS-XG-V12E"];
+
+    return preferredNames
+      .map((name) => allowed.find((item) => item.name === name))
+      .filter(Boolean);
+  }
+
+  function buildCardioBucket(pool, budgetLimit, sqftLimit, totalBudget, totalSqft) {
+    const cardioPool = totalSqft < 2000
+      ? pool.filter((item) => item.kind !== "curved")
+      : pool;
+    const bucket = { items: [], spend: 0, sqft: 0 };
+    const treadmillTarget = totalBudget > 1500000 ? 2 : 1;
+    const preferredTreadmills = getPreferredTreadmills(cardioPool, totalSqft);
+
+    for (let count = 0; count < treadmillTarget; count += 1) {
+      const unusedTreadmill = preferredTreadmills.find((item) =>
+        !bucket.items.some((selected) => selected.name === item.name) && canAdd(bucket, item, budgetLimit, sqftLimit)
+      );
+      const treadmill = unusedTreadmill || preferredTreadmills.find((item) => canAdd(bucket, item, budgetLimit, sqftLimit));
+      if (treadmill) addToBucket(bucket, treadmill);
+    }
+
+    ["elliptical", "bike", "rower"].forEach((family) => {
+      const product = pickAffordable(cardioPool, bucket, budgetLimit, sqftLimit, family);
+      if (product) addToBucket(bucket, product);
+    });
+
+    let added = true;
+    const ranked = [
+      ...preferredTreadmills,
+      ...cardioPool.filter((item) => item.family !== "treadmill").sort((a, b) => a.price - b.price)
+    ];
+    while (added) {
+      added = false;
+      for (const product of ranked) {
+        if (canAdd(bucket, product, budgetLimit, sqftLimit)) {
+          addToBucket(bucket, product);
+          added = true;
+        }
+      }
+    }
+    return bucket;
+  }
+
   function buildPlan(budget, sqft) {
     const cardioBudget = budget * 0.4;
     const pinBudget = budget * 0.4;
@@ -115,11 +167,12 @@
     const pinSqft = sqft * 0.4;
     const plateSqft = sqft * 0.2;
 
-    const cardio = buildBucket(
+    const cardio = buildCardioBucket(
       equipment.filter((item) => item.group === "cardio"),
       cardioBudget,
       cardioSqft,
-      ["treadmill", "elliptical", "bike", "rower"]
+      budget,
+      sqft
     );
     const pin = buildBucket(
       equipment.filter((item) => item.group === "pin"),

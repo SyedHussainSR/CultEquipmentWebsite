@@ -3039,17 +3039,18 @@ select:focus {
 .planner-main {
   width: min(1440px, 100%);
   margin: 0 auto;
-  padding: 150px clamp(16px, 3vw, 32px) 72px;
+  padding: 140px clamp(16px, 3vw, 32px) 72px;
 }
 
 .planner-hero,
 .planner-output {
-  border: 1px solid rgba(250, 249, 245, 0.1);
+  border: 1px solid rgba(250, 249, 245, 0.12);
   border-radius: 34px;
   background:
-    linear-gradient(135deg, rgba(250, 249, 245, 0.06), transparent 34%),
-    linear-gradient(145deg, rgba(27, 28, 32, 0.9), rgba(18, 19, 24, 0.98));
-  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.34);
+    radial-gradient(circle at 16% 18%, rgba(78, 198, 239, 0.16), transparent 34%),
+    radial-gradient(circle at 96% 4%, rgba(243, 182, 0, 0.1), transparent 28%),
+    linear-gradient(145deg, rgba(29, 30, 37, 0.96), rgba(17, 18, 23, 0.99));
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.36);
 }
 
 .planner-hero {
@@ -3057,21 +3058,29 @@ select:focus {
   grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.72fr);
   gap: clamp(24px, 4vw, 58px);
   align-items: center;
-  padding: clamp(28px, 5vw, 70px);
+  padding: clamp(34px, 5vw, 66px);
 }
 
 .planner-hero h1 {
-  max-width: 720px;
-  margin: 16px 0 20px;
+  max-width: 650px;
+  margin: 18px 0 0;
   font-family: "Space Grotesk", "Aptos Display", sans-serif;
-  font-size: clamp(2.1rem, 4.1vw, 4.35rem);
-  line-height: 1;
-  letter-spacing: -0.065em;
+  font-size: clamp(2rem, 3.55vw, 3.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.06em;
 }
 
 .planner-hero .consult-intro {
-  font-size: clamp(0.82rem, 0.95vw, 1rem);
-  letter-spacing: 0.08em;
+  gap: 12px;
+  color: var(--focus);
+  font-size: clamp(0.9rem, 1vw, 1.08rem);
+  letter-spacing: 0.11em;
+  text-shadow: 0 0 22px rgba(78, 198, 239, 0.16);
+}
+
+.planner-hero .consult-intro::before {
+  background: linear-gradient(90deg, var(--warning), var(--focus));
+  box-shadow: 0 0 22px rgba(78, 198, 239, 0.2);
 }
 
 .planner-hero p:not(.consult-intro) {
@@ -3083,13 +3092,14 @@ select:focus {
 
 .planner-card {
   display: grid;
-  gap: 18px;
+  gap: 16px;
   padding: clamp(20px, 3vw, 34px);
   border: 1px solid rgba(250, 249, 245, 0.12);
-  border-radius: 28px;
+  border-radius: 30px;
   background:
-    radial-gradient(circle at 18% 0, rgba(78, 198, 239, 0.12), transparent 38%),
-    rgba(250, 249, 245, 0.055);
+    radial-gradient(circle at 18% 0, rgba(78, 198, 239, 0.15), transparent 38%),
+    linear-gradient(180deg, rgba(250, 249, 245, 0.075), rgba(250, 249, 245, 0.04));
+  box-shadow: inset 0 1px 0 rgba(250, 249, 245, 0.08);
 }
 
 .planner-card label {
@@ -3104,10 +3114,10 @@ select:focus {
 
 .planner-card input {
   width: 100%;
-  min-height: 58px;
+  min-height: 60px;
   border: 1px solid rgba(250, 249, 245, 0.12);
-  border-radius: 18px;
-  background: rgba(250, 249, 245, 0.07);
+  border-radius: 20px;
+  background: rgba(10, 13, 16, 0.35);
   color: var(--text);
   font: inherit;
   font-size: 1rem;
@@ -3129,7 +3139,7 @@ select:focus {
 }
 
 .planner-output {
-  margin-top: 28px;
+  margin-top: 24px;
   padding: clamp(22px, 4vw, 46px);
 }
 
@@ -3322,7 +3332,7 @@ select:focus {
 
 @media (max-width: 720px) {
   .planner-main {
-    padding: 118px 12px 44px;
+    padding: 112px 12px 42px;
   }
 
   .planner-hero,
@@ -3331,18 +3341,22 @@ select:focus {
   }
 
   .planner-hero {
-    padding: 22px 16px;
+    gap: 18px;
+    padding: 22px 16px 18px;
   }
 
   .planner-hero h1 {
-    margin-top: 12px;
-    font-size: clamp(1.9rem, 10vw, 2.65rem);
-    line-height: 1.02;
+    max-width: 270px;
+    margin-top: 10px;
+    font-size: clamp(1.75rem, 8.8vw, 2.35rem);
+    line-height: 1.04;
   }
 
   .planner-hero .consult-intro {
-    font-size: 0.72rem;
-    line-height: 1.25;
+    max-width: none;
+    font-size: 0.76rem;
+    line-height: 1.2;
+    letter-spacing: 0.09em;
   }
 
   .planner-output {
