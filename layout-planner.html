@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gym Layout Planner | cult equipment</title>
+    <meta
+      name="description"
+      content="Design a commercial gym layout in 2D and preview it in an interactive 3D room using cult equipment."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260730-1" />
+  </head>
+  <body class="layout-planner-page">
+    <div class="layout-page-shell">
+      <header class="site-header is-scrolled layout-site-header" data-header>
+        <a class="brand" href="index.html" aria-label="cult equipment">
+          <img src="assets/cult-equipment-logo.png" alt="cult equipment" />
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation" data-nav-toggle aria-label="Open navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="nav-links" id="site-navigation" aria-label="Primary navigation" data-nav-menu>
+          <a class="nav-link" href="index.html#collections">Collections</a>
+          <a class="nav-link" href="index.html#packages">Packages</a>
+          <a class="nav-link" href="index.html#owners">Projects</a>
+          <a class="nav-link" href="catalog.html">Catalog</a>
+          <a class="nav-link" href="budget-planner.html">Equipment Planner</a>
+          <a class="nav-link" href="layout-planner.html" aria-current="page">Layout Planner</a>
+        </nav>
+        <a class="nav-cta" href="index.html#lead-form-wrap">Request a call</a>
+      </header>
+
+      <main class="layout-planner-main">
+        <section class="layout-planner-intro">
+          <div>
+            <p class="layout-eyebrow">Commercial Gym Design Studio</p>
+            <h1>Plan every machine before installation.</h1>
+          </div>
+          <p>
+            Set your room size, place equipment at floor scale, then orbit around the plan in 3D.
+          </p>
+        </section>
+
+        <section class="layout-setup-card" id="layout-setup">
+          <div class="layout-setup-copy">
+            <span>01</span>
+            <div>
+              <p class="layout-eyebrow">Room dimensions</p>
+              <h2>Define your available gym floor.</h2>
+            </div>
+          </div>
+          <form class="layout-setup-form" id="layout-room-form">
+            <label>
+              <span>Area (sq ft)</span>
+              <input id="layout-area" name="area" type="number" min="100" step="1" value="2000" required />
+            </label>
+            <label>
+              <span>Length (ft)</span>
+              <input id="layout-length" name="length" type="number" min="10" step="0.5" value="50" required />
+            </label>
+            <label>
+              <span>Width (ft)</span>
+              <input id="layout-width" name="width" type="number" min="10" step="0.5" value="40" required />
+            </label>
+            <button class="button primary" type="submit">Open Planner</button>
+          </form>
+        </section>
+
+        <section class="layout-editor" id="layout-editor" hidden>
+          <div class="layout-toolbar">
+            <div class="layout-view-switch" role="group" aria-label="Planner view">
+              <button class="is-active" type="button" data-layout-view="2d">2D Plan</button>
+              <button type="button" data-layout-view="3d">3D View</button>
+            </div>
+            <div class="layout-toolbar-meta">
+              <strong id="layout-room-label">50 × 40 ft</strong>
+              <span id="layout-area-label">2,000 sq ft</span>
+              <span id="layout-usage-label">0% occupied</span>
+            </div>
+            <div class="layout-toolbar-actions">
+              <button type="button" data-layout-action="undo" title="Undo">Undo</button>
+              <button type="button" data-layout-action="redo" title="Redo">Redo</button>
+              <button type="button" data-layout-action="fit">Fit room</button>
+              <button type="button" data-layout-action="save">Save</button>
+              <button type="button" data-layout-action="export">Export PNG</button>
+              <button class="is-danger" type="button" data-layout-action="clear">Clear</button>
+            </div>
+          </div>
+
+          <div class="layout-workbench">
+            <div class="layout-stage-shell">
+              <div class="layout-stage-head">
+                <div>
+                  <p class="layout-eyebrow" id="layout-view-kicker">2D Floor Plan</p>
+                  <p id="layout-help-text">Drag equipment to position it. Select an item to edit its exact footprint.</p>
+                </div>
+                <div class="layout-zoom-controls" aria-label="Zoom controls">
+                  <button type="button" data-layout-zoom="-1" aria-label="Zoom out">−</button>
+                  <span id="layout-zoom-label">100%</span>
+                  <button type="button" data-layout-zoom="1" aria-label="Zoom in">+</button>
+                </div>
+              </div>
+
+              <div class="layout-stage-viewport" id="layout-stage-viewport">
+                <div class="layout-room" id="layout-room" aria-label="2D gym layout canvas"></div>
+                <canvas class="layout-3d-canvas" id="layout-3d-canvas" aria-label="Interactive 3D gym layout" hidden></canvas>
+                <div class="layout-empty-state" id="layout-empty-state">
+                  <strong>Your floor is ready.</strong>
+                  <span>Drag equipment here from the catalog or use the Add button.</span>
+                </div>
+              </div>
+
+              <div class="layout-stage-status">
+                <span><i class="layout-status-dot"></i> Safe placement</span>
+                <span><i class="layout-status-dot is-warning"></i> Overlap</span>
+                <span><i class="layout-status-dot is-danger"></i> Outside room</span>
+                <span class="layout-3d-tip" id="layout-3d-tip" hidden>Drag to orbit · Scroll to zoom</span>
+              </div>
+            </div>
+
+            <aside class="layout-catalog-panel">
+              <div class="layout-panel-head">
+                <div>
+                  <p class="layout-eyebrow">Equipment Library</p>
+                  <h2>Catalog</h2>
+                </div>
+                <span id="layout-catalog-count">45 items</span>
+              </div>
+              <div class="layout-catalog-tools">
+                <label class="layout-search">
+                  <span class="sr-only">Search equipment</span>
+                  <input id="layout-catalog-search" type="search" placeholder="Search equipment" />
+                </label>
+                <div class="layout-category-tabs" role="group" aria-label="Equipment category">
+                  <button class="is-active" type="button" data-layout-category="all">All</button>
+                  <button type="button" data-layout-category="cardio">Cardio</button>
+                  <button type="button" data-layout-category="strength">Strength</button>
+                </div>
+              </div>
+              <div class="layout-catalog-list" id="layout-catalog-list"></div>
+            </aside>
+          </div>
+
+          <section class="layout-inspector" id="layout-inspector" hidden>
+            <div class="layout-inspector-product">
+              <img id="layout-inspector-image" src="" alt="" />
+              <div>
+                <p class="layout-eyebrow">Selected equipment</p>
+                <h3 id="layout-inspector-name">Equipment</h3>
+                <span id="layout-inspector-category">Cardio</span>
+              </div>
+            </div>
+            <div class="layout-inspector-fields">
+              <label>
+                <span>Length (ft)</span>
+                <input id="layout-item-length" type="number" min="1" max="30" step="0.1" />
+              </label>
+              <label>
+                <span>Width (ft)</span>
+                <input id="layout-item-width" type="number" min="1" max="30" step="0.1" />
+              </label>
+              <label>
+                <span>X position</span>
+                <input id="layout-item-x" type="number" min="0" step="0.1" />
+              </label>
+              <label>
+                <span>Y position</span>
+                <input id="layout-item-y" type="number" min="0" step="0.1" />
+              </label>
+            </div>
+            <div class="layout-inspector-actions">
+              <button type="button" data-item-action="rotate">Rotate 90°</button>
+              <button type="button" data-item-action="duplicate">Duplicate</button>
+              <button class="is-danger" type="button" data-item-action="delete">Delete</button>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="layout-planner.js?v=20260730-1"></script>
+  </body>
+</html>
