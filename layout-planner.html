@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260730-1" />
+    <link rel="stylesheet" href="styles.css?v=20260731-6" />
   </head>
   <body class="layout-planner-page">
     <div class="layout-page-shell">
@@ -49,13 +49,10 @@
           </p>
         </section>
 
-        <section class="layout-setup-card" id="layout-setup">
+        <section class="layout-setup-card is-compact" id="layout-setup">
           <div class="layout-setup-copy">
-            <span>01</span>
-            <div>
-              <p class="layout-eyebrow">Room dimensions</p>
-              <h2>Define your available gym floor.</h2>
-            </div>
+            <p class="layout-eyebrow">Room size</p>
+            <strong>Set the floor dimensions</strong>
           </div>
           <form class="layout-setup-form" id="layout-room-form">
             <label>
@@ -70,11 +67,11 @@
               <span>Width (ft)</span>
               <input id="layout-width" name="width" type="number" min="10" step="0.5" value="40" required />
             </label>
-            <button class="button primary" type="submit">Open Planner</button>
+            <button class="button primary" type="submit">Update Room</button>
           </form>
         </section>
 
-        <section class="layout-editor" id="layout-editor" hidden>
+        <section class="layout-editor" id="layout-editor">
           <div class="layout-toolbar">
             <div class="layout-view-switch" role="group" aria-label="Planner view">
               <button class="is-active" type="button" data-layout-view="2d">2D Plan</button>
@@ -122,7 +119,7 @@
                 <span><i class="layout-status-dot"></i> Safe placement</span>
                 <span><i class="layout-status-dot is-warning"></i> Overlap</span>
                 <span><i class="layout-status-dot is-danger"></i> Outside room</span>
-                <span class="layout-3d-tip" id="layout-3d-tip" hidden>Drag to orbit · Scroll to zoom</span>
+                <span class="layout-3d-tip" id="layout-3d-tip" hidden>Drag machine to move · Drag empty space to orbit · Scroll to zoom</span>
               </div>
             </div>
 
@@ -145,6 +142,18 @@
                   <button type="button" data-layout-category="strength">Strength</button>
                 </div>
               </div>
+              <section class="layout-selected-summary" id="layout-selected-summary">
+                <div class="layout-selected-head">
+                  <div>
+                    <span>Selected equipment</span>
+                    <strong><b id="layout-selected-total">0</b> machines</strong>
+                  </div>
+                  <button type="button" id="layout-selected-toggle" aria-expanded="true">Hide</button>
+                </div>
+                <div class="layout-selected-list" id="layout-selected-list">
+                  <p class="layout-selected-empty">Add equipment to build your gym plan.</p>
+                </div>
+              </section>
               <div class="layout-catalog-list" id="layout-catalog-list"></div>
             </aside>
           </div>
@@ -175,9 +184,13 @@
                 <span>Y position</span>
                 <input id="layout-item-y" type="number" min="0" step="0.1" />
               </label>
+              <label>
+                <span>Angle (degrees)</span>
+                <input id="layout-item-rotation" type="number" min="0" max="359" step="1" />
+              </label>
             </div>
             <div class="layout-inspector-actions">
-              <button type="button" data-item-action="rotate">Rotate 90°</button>
+              <button type="button" data-item-action="rotate">Rotate 15 degrees</button>
               <button type="button" data-item-action="duplicate">Duplicate</button>
               <button class="is-danger" type="button" data-item-action="delete">Delete</button>
             </div>
@@ -186,6 +199,6 @@
       </main>
     </div>
 
-    <script src="layout-planner.js?v=20260730-1"></script>
+    <script src="layout-planner.js?v=20260731-6"></script>
   </body>
 </html>
