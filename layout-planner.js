@@ -1,6 +1,11 @@
 (function () {
   "use strict";
 
+  function structureImage(label, symbol, color) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="220" viewBox="0 0 300 220"><rect width="300" height="220" rx="22" fill="#f4f5f1"/><rect x="42" y="28" width="216" height="150" rx="14" fill="${color}" fill-opacity=".16" stroke="${color}" stroke-width="6"/><text x="150" y="113" text-anchor="middle" font-family="Arial" font-size="54" font-weight="700" fill="${color}">${symbol}</text><text x="150" y="204" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700" fill="#15191f">${label}</text></svg>`;
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  }
+
   const catalog = [
     ["CS-XG-V12", "Cardio | Treadmills", "cardio", "assets/catalog-items/cardio-cs-xg-v12.png", 7.1, 3.1],
     ["CS-AC800", "Cardio | Treadmills", "cardio", "assets/catalog-items/cardio-cs-ac800.png", 7.2, 3.1],
@@ -46,7 +51,10 @@
     ["Force Chest Press CS-MWH001", "Strength | Force Series", "strength", "assets/catalog-items/force-chest-press.png", 6.0, 5.0],
     ["Force Incline Chest Press CS-MWH002", "Strength | Force Series", "strength", "assets/catalog-items/force-incline-chest-press.png", 6.2, 5.0],
     ["Force Row CS-MWH006", "Strength | Force Series", "strength", "assets/catalog-items/force-row.png", 6.0, 5.0],
-    ["Force 45 Degree Leg Press CS-XH022", "Strength | Force Series", "strength", "assets/catalog-items/force-45-degree-leg-press.png", 7.5, 5.5]
+    ["Force 45 Degree Leg Press CS-XH022", "Strength | Force Series", "strength", "assets/catalog-items/force-45-degree-leg-press.png", 7.5, 5.5],
+    ["Structural Pillar", "Structure | Pillar", "structure", structureImage("Pillar", "P", "#f3b600"), 2, 2],
+    ["Washroom 7 x 3 ft", "Structure | Washroom", "structure", structureImage("Washroom", "WC", "#4ec6ef"), 7, 3],
+    ["Free-form Reserved Space", "Structure | Free space", "structure", structureImage("Free space", "+", "#f8387d"), 10, 8]
   ].map((item, index) => ({
     id: `catalog-${index + 1}`,
     title: item[0],
@@ -76,6 +84,16 @@
   const inspector = $("#layout-inspector");
   const imageCache = new Map();
   const saveKey = "cult-equipment-layout-v1";
+  const roomShapes = {
+    rectangle: [[0, 0], [1, 0], [1, 1], [0, 1]],
+    "l-shape": [[0, 0], [0.58, 0], [0.58, 0.42], [1, 0.42], [1, 1], [0, 1]],
+    "z-shape": [[0, 0], [0.68, 0], [0.68, 0.28], [1, 0.28], [1, 1], [0.32, 1], [0.32, 0.72], [0, 0.72]],
+    "s-shape": [[0.3, 0], [1, 0], [1, 0.7], [0.7, 0.7], [0.7, 1], [0, 1], [0, 0.3], [0.3, 0.3]],
+    "t-shape": [[0.32, 0], [0.68, 0], [0.68, 0.34], [1, 0.34], [1, 0.66], [0.68, 0.66], [0.68, 1], [0.32, 1], [0.32, 0.66], [0, 0.66], [0, 0.34], [0.32, 0.34]],
+    "u-shape": [[0, 0], [0.28, 0], [0.28, 0.64], [0.72, 0.64], [0.72, 0], [1, 0], [1, 1], [0, 1]],
+    corner: [[0, 0], [0.68, 0], [0.68, 0.28], [0.28, 0.28], [0.28, 1], [0, 1]],
+    blunt: [[0, 0], [0.72, 0], [1, 0.28], [1, 1], [0, 1]]
+  };
 
   let roomLength = 50;
   let roomWidth = 40;
@@ -91,6 +109,77 @@
   let orbitState = null;
   let drag3DState = null;
   let equipment3DHitAreas = [];
+  let roomShape = "rectangle";
+  let underlay = null;
+  let floors = [{ id: "floor-1", name: "Floor 1", length: 50, width: 40, shape: "rectangle", underlay: null }];
+  let activeFloorId = "floor-1";
+  let selectedIds = new Set();
+  let groupMode = false;
+
+  function activePlaced() {
+    return placed.filter((item) => (item.floorId || "floor-1") === activeFloorId);
+  }
+
+  function syncActiveFloorConfig() {
+    const floor = floors.find((item) => item.id === activeFloorId);
+    if (!floor) return;
+    floor.length = roomLength;
+    floor.width = roomWidth;
+    floor.shape = roomShape;
+    floor.underlay = underlay;
+  }
+
+  function activateFloor(floorId) {
+    syncActiveFloorConfig();
+    const floor = floors.find((item) => item.id === floorId);
+    if (!floor) return;
+    activeFloorId = floor.id;
+    roomLength = Number(floor.length) || 50;
+    roomWidth = Number(floor.width) || 40;
+    roomShape = floor.shape || "rectangle";
+    underlay = floor.underlay || null;
+    selectedId = "";
+    selectedIds = new Set();
+    areaInput.value = Math.round(roomLength * roomWidth);
+    lengthInput.value = roomLength;
+    widthInput.value = roomWidth;
+    $("#layout-upload-status").textContent = underlay ? underlay.name : "PNG, JPG, SVG, PDF or DXF";
+    $("#layout-remove-underlay").hidden = !underlay;
+    updateShapeButtons();
+    renderAll();
+  }
+
+  function updateShapeButtons() {
+    $$('[data-room-shape]').forEach((button) => button.classList.toggle("is-active", button.dataset.roomShape === roomShape));
+  }
+
+  function roomShapePoints() {
+    return (roomShapes[roomShape] || roomShapes.rectangle).map(([x, y]) => ({ x: x * roomLength, y: y * roomWidth }));
+  }
+
+  function roomShapeClip() {
+    return (roomShapes[roomShape] || roomShapes.rectangle).map(([x, y]) => `${x * 100}% ${y * 100}%`).join(",");
+  }
+
+  function pointInPolygon(point, polygon) {
+    let inside = false;
+    for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
+      const currentPoint = polygon[index];
+      const previousPoint = polygon[previous];
+      const cross = (point.y - previousPoint.y) * (currentPoint.x - previousPoint.x)
+        - (point.x - previousPoint.x) * (currentPoint.y - previousPoint.y);
+      const onSegment = Math.abs(cross) < 0.001
+        && point.x >= Math.min(previousPoint.x, currentPoint.x) - 0.001
+        && point.x <= Math.max(previousPoint.x, currentPoint.x) + 0.001
+        && point.y >= Math.min(previousPoint.y, currentPoint.y) - 0.001
+        && point.y <= Math.max(previousPoint.y, currentPoint.y) + 0.001;
+      if (onSegment) return true;
+      const intersects = ((currentPoint.y > point.y) !== (previousPoint.y > point.y))
+        && (point.x < (previousPoint.x - currentPoint.x) * (point.y - currentPoint.y) / (previousPoint.y - currentPoint.y || 0.0001) + currentPoint.x);
+      if (intersects) inside = !inside;
+    }
+    return inside;
+  }
 
   function escapeHtml(value) {
     return String(value)
@@ -106,7 +195,7 @@
   }
 
   function pushHistory() {
-    const snapshot = JSON.stringify({ roomLength, roomWidth, placed });
+    const snapshot = JSON.stringify({ roomLength, roomWidth, roomShape, floors, activeFloorId, placed });
     if (history[historyIndex] === snapshot) return;
     history = history.slice(0, historyIndex + 1);
     history.push(snapshot);
@@ -123,8 +212,25 @@
     const snapshot = JSON.parse(history[historyIndex]);
     roomLength = snapshot.roomLength;
     roomWidth = snapshot.roomWidth;
+    roomShape = snapshot.roomShape || "rectangle";
+    floors = (snapshot.floors || [{ id: "floor-1", name: "Floor 1" }]).map((floor) => ({
+      ...floor,
+      length: Number(floor.length) || 50,
+      width: Number(floor.width) || 40,
+      shape: floor.shape || "rectangle",
+      underlay: floor.underlay || null
+    }));
+    activeFloorId = snapshot.activeFloorId || floors[0].id;
     placed = snapshot.placed;
     if (!placed.some((item) => item.id === selectedId)) selectedId = "";
+    const floor = floors.find((item) => item.id === activeFloorId) || floors[0];
+    roomLength = floor.length;
+    roomWidth = floor.width;
+    roomShape = floor.shape;
+    underlay = floor.underlay;
+    areaInput.value = Math.round(roomLength * roomWidth);
+    lengthInput.value = roomLength;
+    widthInput.value = roomWidth;
     renderAll();
   }
 
@@ -133,11 +239,11 @@
   }
 
   function getSelected() {
-    return placed.find((item) => item.id === selectedId);
+    return activePlaced().find((item) => item.id === selectedId);
   }
 
   function getCatalogQuantity(catalogId) {
-    return placed.filter((item) => item.catalogId === catalogId).length;
+    return activePlaced().filter((item) => item.catalogId === catalogId).length;
   }
 
   function getOrientedSize(item) {
@@ -170,7 +276,15 @@
 
   function isOutside(item) {
     const size = getOrientedSize(item);
-    return item.x < 0 || item.y < 0 || item.x + size.length > roomLength || item.y + size.width > roomWidth;
+    if (item.x < 0 || item.y < 0 || item.x + size.length > roomLength || item.y + size.width > roomWidth) return true;
+    if (roomShape === "rectangle") return false;
+    const polygon = roomShapePoints();
+    return ![
+      { x: item.x, y: item.y },
+      { x: item.x + size.length, y: item.y },
+      { x: item.x + size.length, y: item.y + size.width },
+      { x: item.x, y: item.y + size.width }
+    ].every((corner) => pointInPolygon(corner, polygon));
   }
 
   function overlaps(a, b) {
@@ -181,7 +295,7 @@
 
   function getPlacementState(item) {
     if (isOutside(item)) return "outside";
-    if (placed.some((other) => other.id !== item.id && overlaps(item, other))) return "overlap";
+    if (activePlaced().some((other) => other.id !== item.id && overlaps(item, other))) return "overlap";
     return "safe";
   }
 
@@ -203,16 +317,21 @@
 
   function renderPlaced() {
     const scale = roomScale();
-    room.innerHTML = placed.map((item) => {
+    const underlayMarkup = underlay
+      ? underlay.type === "application/pdf"
+        ? `<object class="layout-underlay" data="${underlay.data}" type="application/pdf" aria-label="Uploaded floor plan"></object>`
+        : `<img class="layout-underlay" src="${underlay.data}" alt="Uploaded gym floor plan" />`
+      : "";
+    room.innerHTML = `<div class="layout-room-surface" style="clip-path:polygon(${roomShapeClip()})">${underlayMarkup}</div>` + activePlaced().map((item) => {
       const product = getCatalogItem(item.catalogId);
       const size = getOrientedSize(item);
       const state = getPlacementState(item);
       return `
         <button
-          class="layout-placed-item ${item.id === selectedId ? "is-selected" : ""} is-${state}"
+          class="layout-placed-item ${selectedIds.has(item.id) || item.id === selectedId ? "is-selected" : ""} is-${state}"
           type="button"
           data-placed-id="${item.id}"
-          style="left:${item.x * scale}px;top:${item.y * scale}px;width:${size.length * scale}px;height:${size.width * scale}px"
+          style="left:${item.x * scale}px;top:${item.y * scale}px;width:${size.length * scale}px;height:${size.width * scale}px;--item-rotation:${item.rotation}deg;--visual-width:${Math.max(18, item.length * scale - 8)}px;--visual-height:${Math.max(18, item.width * scale - 8)}px"
           aria-label="${escapeHtml(product.title)}"
         >
           <img class="layout-placed-visual" src="${product.image}" alt="" draggable="false" />
@@ -221,14 +340,14 @@
       `;
     }).join("");
 
-    $("#layout-empty-state").hidden = placed.length > 0 || viewMode === "3d";
+    $("#layout-empty-state").hidden = activePlaced().length > 0 || viewMode === "3d";
     updateUsage();
   }
 
   function syncPlacedGeometry() {
     const scale = roomScale();
     $$("[data-placed-id]", room).forEach((element) => {
-      const item = placed.find((placedItem) => placedItem.id === element.dataset.placedId);
+      const item = activePlaced().find((placedItem) => placedItem.id === element.dataset.placedId);
       if (!item) return;
       const size = getOrientedSize(item);
       const state = getPlacementState(item);
@@ -236,10 +355,13 @@
       element.style.top = `${item.y * scale}px`;
       element.style.width = `${size.length * scale}px`;
       element.style.height = `${size.width * scale}px`;
+      element.style.setProperty("--item-rotation", `${item.rotation}deg`);
+      element.style.setProperty("--visual-width", `${Math.max(18, item.length * scale - 8)}px`);
+      element.style.setProperty("--visual-height", `${Math.max(18, item.width * scale - 8)}px`);
       element.classList.toggle("is-safe", state === "safe");
       element.classList.toggle("is-overlap", state === "overlap");
       element.classList.toggle("is-outside", state === "outside");
-      element.classList.toggle("is-selected", item.id === selectedId);
+      element.classList.toggle("is-selected", selectedIds.has(item.id) || item.id === selectedId);
     });
     updateUsage();
   }
@@ -277,7 +399,7 @@
       .map((product) => ({ product, quantity: getCatalogQuantity(product.id) }))
       .filter((group) => group.quantity > 0);
 
-    $("#layout-selected-total").textContent = placed.length;
+    $("#layout-selected-total").textContent = activePlaced().length;
     selectedSummary.classList.toggle("has-items", groups.length > 0);
     selectedList.innerHTML = groups.length
       ? groups.map(({ product, quantity }) => `
@@ -297,7 +419,7 @@
   function addEquipment(catalogId, x = null, y = null) {
     const product = getCatalogItem(catalogId);
     if (!product) return;
-    const offset = placed.length % 6;
+    const offset = activePlaced().length % 6;
     const item = {
       id: uid(),
       catalogId,
@@ -305,21 +427,24 @@
       y: y == null ? Math.max(0, roomWidth / 2 - product.width / 2 + offset * 0.6) : y,
       length: product.length,
       width: product.width,
-      rotation: 0
+      rotation: 0,
+      floorId: activeFloorId
     };
     item.x = Math.min(Math.max(0, item.x), Math.max(0, roomLength - item.length));
     item.y = Math.min(Math.max(0, item.y), Math.max(0, roomWidth - item.width));
     placed.push(item);
     selectedId = item.id;
+    selectedIds = new Set([item.id]);
     pushHistory();
     renderAll();
   }
 
   function removeOneEquipment(catalogId) {
-    const index = placed.findLastIndex((item) => item.catalogId === catalogId);
+    const index = placed.findLastIndex((item) => (item.floorId || "floor-1") === activeFloorId && item.catalogId === catalogId);
     if (index < 0) return;
     const [removed] = placed.splice(index, 1);
     if (removed.id === selectedId) selectedId = "";
+    selectedIds.delete(removed.id);
     pushHistory();
     renderAll();
   }
@@ -342,17 +467,29 @@
 
   function updateUsage() {
     const roomArea = roomLength * roomWidth;
-    const occupied = placed.reduce((sum, item) => sum + item.length * item.width, 0);
+    const occupied = activePlaced().reduce((sum, item) => sum + item.length * item.width, 0);
     const percentage = roomArea ? Math.min(999, Math.round((occupied / roomArea) * 100)) : 0;
     $("#layout-usage-label").textContent = `${percentage}% occupied`;
   }
 
+  function renderFloors() {
+    const tabs = $("#layout-floor-tabs");
+    if (!tabs) return;
+    tabs.innerHTML = floors.map((floor) => `
+      <button class="${floor.id === activeFloorId ? "is-active" : ""}" type="button" data-floor-id="${floor.id}">
+        ${escapeHtml(floor.name)} <small>${placed.filter((item) => (item.floorId || "floor-1") === floor.id).length}</small>
+      </button>
+    `).join("");
+  }
+
   function renderAll() {
+    updateShapeButtons();
     updateRoomDimensions();
     renderPlaced();
     renderInspector();
     renderCatalog();
     renderSelectedSummary();
+    renderFloors();
     if (viewMode === "3d") requestAnimationFrame(draw3D);
   }
 
@@ -370,7 +507,7 @@
       ? "Drag a machine to move it. Drag empty space to orbit and scroll to zoom."
       : "Drag equipment to position it. Select an item to edit its exact footprint.";
     $(".layout-zoom-controls").hidden = is3D;
-    $("#layout-empty-state").hidden = placed.length > 0 || is3D;
+    $("#layout-empty-state").hidden = activePlaced().length > 0 || is3D;
     if (is3D) {
       requestAnimationFrame(() => requestAnimationFrame(draw3D));
     } else {
@@ -488,12 +625,8 @@
     ctx.fillStyle = backdrop;
     ctx.fillRect(0, 0, width, height);
 
-    const floorCorners = [
-      project3D(0, 0, 0, width, height),
-      project3D(roomLength, 0, 0, width, height),
-      project3D(roomLength, roomWidth, 0, width, height),
-      project3D(0, roomWidth, 0, width, height)
-    ];
+    const shapePoints = roomShapePoints();
+    const floorCorners = shapePoints.map((point) => project3D(point.x, point.y, 0, width, height));
     const floorGradient = ctx.createLinearGradient(0, height * 0.4, 0, height);
     floorGradient.addColorStop(0, "#5c5148");
     floorGradient.addColorStop(0.5, "#302c2a");
@@ -501,41 +634,17 @@
     drawPolygon(floorCorners, floorGradient, "rgba(78,198,239,.7)", 1.5);
 
     const wallHeight = Math.max(11, Math.min(16, Math.sqrt(roomLength * roomWidth) * 0.3));
-    const backWall = [
-      project3D(0, roomWidth, 0, width, height),
-      project3D(roomLength, roomWidth, 0, width, height),
-      project3D(roomLength, roomWidth, wallHeight, width, height),
-      project3D(0, roomWidth, wallHeight, width, height)
-    ];
-    const sideWall = [
-      project3D(0, 0, 0, width, height),
-      project3D(0, roomWidth, 0, width, height),
-      project3D(0, roomWidth, wallHeight, width, height),
-      project3D(0, 0, wallHeight, width, height)
-    ];
-    const rightWall = [
-      project3D(roomLength, 0, 0, width, height),
-      project3D(roomLength, roomWidth, 0, width, height),
-      project3D(roomLength, roomWidth, wallHeight, width, height),
-      project3D(roomLength, 0, wallHeight, width, height)
-    ];
-    const frontWall = [
-      project3D(0, 0, 0, width, height),
-      project3D(roomLength, 0, 0, width, height),
-      project3D(roomLength, 0, wallHeight, width, height),
-      project3D(0, 0, wallHeight, width, height)
-    ];
-    const backWallGradient = ctx.createLinearGradient(0, height * 0.08, 0, height * 0.64);
-    backWallGradient.addColorStop(0, "#222830");
-    backWallGradient.addColorStop(0.55, "#343c45");
-    backWallGradient.addColorStop(1, "#171c22");
-    const sideWallGradient = ctx.createLinearGradient(0, 0, width * 0.45, 0);
-    sideWallGradient.addColorStop(0, "#171d23");
-    sideWallGradient.addColorStop(1, "#4d5861");
-    drawPolygon(backWall, backWallGradient, "rgba(255,255,255,.45)");
-    drawPolygon(sideWall, sideWallGradient, "rgba(255,255,255,.3)");
-    drawPolygon(rightWall, "rgba(31,39,47,.72)", "rgba(213,226,229,.28)");
-    drawPolygon(frontWall, "rgba(84,101,108,.015)", "rgba(207,222,225,.2)");
+    shapePoints.forEach((point, index) => {
+      const next = shapePoints[(index + 1) % shapePoints.length];
+      const wall = [
+        project3D(point.x, point.y, 0, width, height),
+        project3D(next.x, next.y, 0, width, height),
+        project3D(next.x, next.y, wallHeight, width, height),
+        project3D(point.x, point.y, wallHeight, width, height)
+      ];
+      const wallLight = index % 2 ? "rgba(50,60,70,.58)" : "rgba(29,36,44,.68)";
+      drawPolygon(wall, wallLight, "rgba(225,239,242,.3)");
+    });
 
     ctx.lineWidth = 1;
     ctx.strokeStyle = "rgba(255,255,255,.09)";
@@ -557,14 +666,14 @@
       ctx.stroke();
     }
 
-    const mirror = [
+    const mirror = roomShape === "rectangle" ? [
       project3D(roomLength * 0.12, roomWidth, 1.2, width, height),
       project3D(roomLength * 0.88, roomWidth, 1.2, width, height),
       project3D(roomLength * 0.88, roomWidth, wallHeight * 0.72, width, height),
       project3D(roomLength * 0.12, roomWidth, wallHeight * 0.72, width, height)
-    ];
-    drawPolygon(mirror, "rgba(125,191,207,.28)", "rgba(233,249,252,.75)");
-    for (let panel = 1; panel < 4; panel += 1) {
+    ] : [];
+    if (mirror.length) drawPolygon(mirror, "rgba(125,191,207,.28)", "rgba(233,249,252,.75)");
+    for (let panel = 1; mirror.length && panel < 4; panel += 1) {
       const panelX = roomLength * (0.12 + panel * 0.19);
       const mirrorBottom = project3D(panelX, roomWidth, 1.2, width, height);
       const mirrorTop = project3D(panelX, roomWidth, wallHeight * 0.72, width, height);
@@ -576,15 +685,15 @@
       ctx.stroke();
     }
 
-    const accentBand = [
+    const accentBand = roomShape === "rectangle" ? [
       project3D(0, roomWidth, wallHeight * 0.78, width, height),
       project3D(roomLength, roomWidth, wallHeight * 0.78, width, height),
       project3D(roomLength, roomWidth, wallHeight * 0.84, width, height),
       project3D(0, roomWidth, wallHeight * 0.84, width, height)
-    ];
-    drawPolygon(accentBand, "rgba(248,56,125,.82)", "rgba(255,255,255,.3)");
+    ] : [];
+    if (accentBand.length) drawPolygon(accentBand, "rgba(248,56,125,.82)", "rgba(255,255,255,.3)");
 
-    const sorted = placed
+    const sorted = activePlaced()
       .map((item) => {
         const size = getOrientedSize(item);
         return {
@@ -610,16 +719,18 @@
         item.id === selectedId ? "#4ec6ef" : "rgba(78,198,239,.46)",
         item.id === selectedId ? 2 : 1
       );
+      ctx.translate(point.x, point.y);
+      ctx.rotate(-item.rotation * Math.PI / 180);
       if (image.complete && image.naturalWidth) {
-        ctx.drawImage(image, point.x - visualWidth / 2, point.y - visualHeight, visualWidth, visualHeight);
+        ctx.drawImage(image, -visualWidth / 2, -visualHeight, visualWidth, visualHeight);
       } else {
         ctx.fillStyle = "#343b48";
-        ctx.fillRect(point.x - visualWidth / 2, point.y - visualHeight, visualWidth, visualHeight);
+        ctx.fillRect(-visualWidth / 2, -visualHeight, visualWidth, visualHeight);
       }
       if (item.id === selectedId) {
         ctx.strokeStyle = "#4ec6ef";
         ctx.lineWidth = 2;
-        ctx.strokeRect(point.x - visualWidth / 2, point.y - visualHeight, visualWidth, visualHeight);
+        ctx.strokeRect(-visualWidth / 2, -visualHeight, visualWidth, visualHeight);
       }
       ctx.restore();
       drawEquipmentLabel(product.title, point.x, point.y + 8);
@@ -671,7 +782,7 @@
       exportCtx.lineTo(padding + roomLength * scale, padding + y * scale);
       exportCtx.stroke();
     }
-    placed.forEach((item) => {
+    activePlaced().forEach((item) => {
       const product = getCatalogItem(item.catalogId);
       const size = getOrientedSize(item);
       const image = loadImage(product.image);
@@ -688,7 +799,7 @@
     });
     exportCtx.fillStyle = "#11141a";
     exportCtx.font = "700 26px Sora, sans-serif";
-    exportCtx.fillText(`cult equipment · ${roomLength} × ${roomWidth} ft · ${placed.length} items`, padding, 42);
+    exportCtx.fillText(`cult equipment · ${roomLength} × ${roomWidth} ft · ${activePlaced().length} items`, padding, 42);
     const link = document.createElement("a");
     link.download = "cult-equipment-gym-layout.png";
     link.href = exportCanvas.toDataURL("image/png");
@@ -697,7 +808,7 @@
 
   function saveLayout() {
     try {
-      localStorage.setItem(saveKey, JSON.stringify({ roomLength, roomWidth, placed }));
+      localStorage.setItem(saveKey, JSON.stringify({ roomLength, roomWidth, roomShape, underlay, floors, activeFloorId, placed }));
       const saveButton = $("[data-layout-action='save']");
       const previous = saveButton.textContent;
       saveButton.textContent = "Saved";
@@ -713,7 +824,22 @@
       if (!saved || !Array.isArray(saved.placed)) return false;
       roomLength = Number(saved.roomLength) || 50;
       roomWidth = Number(saved.roomWidth) || 40;
-      placed = saved.placed.filter((item) => getCatalogItem(item.catalogId));
+      roomShape = saved.roomShape || "rectangle";
+      underlay = saved.underlay || null;
+      floors = (Array.isArray(saved.floors) && saved.floors.length ? saved.floors : [{ id: "floor-1", name: "Floor 1" }]).map((floor) => ({
+        ...floor,
+        length: Number(floor.length) || roomLength,
+        width: Number(floor.width) || roomWidth,
+        shape: floor.shape || roomShape,
+        underlay: floor.underlay || null
+      }));
+      activeFloorId = saved.activeFloorId && floors.some((floor) => floor.id === saved.activeFloorId) ? saved.activeFloorId : floors[0].id;
+      placed = saved.placed.filter((item) => getCatalogItem(item.catalogId)).map((item) => ({ ...item, floorId: item.floorId || "floor-1" }));
+      const floor = floors.find((item) => item.id === activeFloorId) || floors[0];
+      roomLength = floor.length;
+      roomWidth = floor.width;
+      roomShape = floor.shape;
+      underlay = floor.underlay;
       areaInput.value = Math.round(roomLength * roomWidth);
       lengthInput.value = roomLength;
       widthInput.value = roomWidth;
@@ -723,11 +849,179 @@
     }
   }
 
+  function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function dxfToSvg(text) {
+    const rows = text.split(/\r?\n/);
+    const pairs = [];
+    for (let index = 0; index + 1 < rows.length; index += 2) {
+      pairs.push([rows[index].trim(), rows[index + 1].trim()]);
+    }
+    const lines = [];
+    for (let index = 0; index < pairs.length; index += 1) {
+      if (pairs[index][0] !== "0" || pairs[index][1].toUpperCase() !== "LINE") continue;
+      const entity = {};
+      for (index += 1; index < pairs.length && pairs[index][0] !== "0"; index += 1) {
+        const [code, value] = pairs[index];
+        if (["10", "20", "11", "21"].includes(code)) entity[code] = Number(value);
+      }
+      index -= 1;
+      if (["10", "20", "11", "21"].every((code) => Number.isFinite(entity[code]))) lines.push(entity);
+    }
+    if (!lines.length) throw new Error("No LINE entities found in DXF");
+    const xs = lines.flatMap((line) => [line["10"], line["11"]]);
+    const ys = lines.flatMap((line) => [line["20"], line["21"]]);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    const spanX = Math.max(1, maxX - minX);
+    const spanY = Math.max(1, maxY - minY);
+    const markup = lines.map((line) => `<line x1="${line["10"]}" y1="${maxY - line["20"] + minY}" x2="${line["11"]}" y2="${maxY - line["21"] + minY}" />`).join("");
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${minX} ${minY} ${spanX} ${spanY}"><rect x="${minX}" y="${minY}" width="${spanX}" height="${spanY}" fill="white"/><g fill="none" stroke="#242a31" stroke-width="${Math.max(spanX, spanY) / 500}">${markup}</g></svg>`;
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  }
+
+  function applyGroupAction(action) {
+    const items = activePlaced().filter((item) => selectedIds.has(item.id));
+    if (items.length < 2) return;
+    const offset = Math.max(0, Number($("#layout-group-offset").value) || 0);
+    if (action === "row") {
+      const centerY = items.reduce((sum, item) => sum + item.y + getOrientedSize(item).width / 2, 0) / items.length;
+      items.forEach((item) => {
+        const size = getOrientedSize(item);
+        item.y = Math.max(0, Math.min(roomWidth - size.width, centerY - size.width / 2));
+      });
+    }
+    if (action === "column") {
+      const centerX = items.reduce((sum, item) => sum + item.x + getOrientedSize(item).length / 2, 0) / items.length;
+      items.forEach((item) => {
+        const size = getOrientedSize(item);
+        item.x = Math.max(0, Math.min(roomLength - size.length, centerX - size.length / 2));
+      });
+    }
+    if (action === "space") {
+      const sorted = [...items].sort((a, b) => a.x - b.x);
+      let cursor = Math.min(...sorted.map((item) => item.x));
+      sorted.forEach((item) => {
+        item.x = Math.max(0, Math.min(roomLength - getOrientedSize(item).length, cursor));
+        cursor += getOrientedSize(item).length + offset;
+      });
+    }
+    if (action === "offset-x" || action === "offset-y") {
+      items.forEach((item, index) => {
+        if (action === "offset-x") item.x = Math.max(0, Math.min(roomLength - getOrientedSize(item).length, item.x + offset * index));
+        if (action === "offset-y") item.y = Math.max(0, Math.min(roomWidth - getOrientedSize(item).width, item.y + offset * index));
+      });
+    }
+    pushHistory();
+    renderAll();
+  }
+
+  $$('[data-room-shape]').forEach((button) => button.addEventListener("click", () => {
+    roomShape = button.dataset.roomShape;
+    syncActiveFloorConfig();
+    selectedId = "";
+    selectedIds = new Set();
+    pushHistory();
+    renderAll();
+  }));
+
+  $("#layout-floor-tabs").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-floor-id]");
+    if (button) activateFloor(button.dataset.floorId);
+  });
+  $("#layout-add-floor").addEventListener("click", () => {
+    syncActiveFloorConfig();
+    const floor = {
+      id: `floor-${Date.now()}`,
+      name: `Floor ${floors.length + 1}`,
+      length: roomLength,
+      width: roomWidth,
+      shape: "rectangle",
+      underlay: null
+    };
+    floors.push(floor);
+    activateFloor(floor.id);
+    pushHistory();
+  });
+  $("#layout-rename-floor").addEventListener("click", () => {
+    const floor = floors.find((item) => item.id === activeFloorId);
+    if (!floor) return;
+    const name = window.prompt("Floor name", floor.name);
+    if (!name || !name.trim()) return;
+    floor.name = name.trim().slice(0, 32);
+    pushHistory();
+    renderFloors();
+  });
+  $("#layout-delete-floor").addEventListener("click", () => {
+    if (floors.length === 1) return;
+    const floor = floors.find((item) => item.id === activeFloorId);
+    if (!floor || !window.confirm(`Delete ${floor.name} and its equipment?`)) return;
+    placed = placed.filter((item) => (item.floorId || "floor-1") !== activeFloorId);
+    floors = floors.filter((item) => item.id !== activeFloorId);
+    activateFloor(floors[0].id);
+    pushHistory();
+  });
+
+  $("#layout-group-mode").addEventListener("click", (event) => {
+    groupMode = !groupMode;
+    event.currentTarget.classList.toggle("is-active", groupMode);
+    event.currentTarget.textContent = groupMode ? "Finish selection" : "Group select";
+    if (!groupMode) selectedIds = selectedId ? new Set([selectedId]) : new Set();
+    renderAll();
+  });
+  $$('[data-group-action]').forEach((button) => button.addEventListener("click", () => applyGroupAction(button.dataset.groupAction)));
+
+  const uploadInput = $("#layout-plan-upload");
+  uploadInput.addEventListener("change", async () => {
+    const file = uploadInput.files && uploadInput.files[0];
+    if (!file) return;
+    const status = $("#layout-upload-status");
+    try {
+      if (/\.dwg$/i.test(file.name)) throw new Error("DWG is not browser-readable. Export it as DXF, PDF or PNG first.");
+      status.textContent = "Reading plan...";
+      let data;
+      let type = file.type || "image/svg+xml";
+      if (/\.dxf$/i.test(file.name)) {
+        data = dxfToSvg(await file.text());
+        type = "image/svg+xml";
+      } else {
+        data = await fileToDataUrl(file);
+      }
+      underlay = { name: file.name, type, data };
+      syncActiveFloorConfig();
+      status.textContent = file.name;
+      $("#layout-remove-underlay").hidden = false;
+      pushHistory();
+      renderAll();
+    } catch (error) {
+      status.textContent = error.message || "This plan could not be opened.";
+    }
+    uploadInput.value = "";
+  });
+  $("#layout-remove-underlay").addEventListener("click", () => {
+    underlay = null;
+    syncActiveFloorConfig();
+    $("#layout-upload-status").textContent = "PNG, JPG, SVG, PDF or DXF";
+    $("#layout-remove-underlay").hidden = true;
+    pushHistory();
+    renderAll();
+  });
+
   roomForm.addEventListener("submit", (event) => {
     event.preventDefault();
     roomLength = Math.max(10, Number(lengthInput.value) || 50);
     roomWidth = Math.max(10, Number(widthInput.value) || 40);
     areaInput.value = Math.round(roomLength * roomWidth);
+    syncActiveFloorConfig();
     setupCard.classList.add("is-compact");
     pushHistory();
     renderAll();
@@ -804,11 +1098,19 @@
     const element = event.target.closest("[data-placed-id]");
     if (!element) {
       selectedId = "";
+      selectedIds = new Set();
       renderAll();
       return;
     }
     event.preventDefault();
     selectedId = element.dataset.placedId;
+    if (groupMode || event.shiftKey) {
+      if (selectedIds.has(selectedId)) selectedIds.delete(selectedId);
+      else selectedIds.add(selectedId);
+      renderAll();
+      return;
+    }
+    selectedIds = new Set([selectedId]);
     const item = getSelected();
     dragState = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, x: item.x, y: item.y };
     element.setPointerCapture(event.pointerId);
@@ -850,9 +1152,10 @@
     }
     if (action === "save") saveLayout();
     if (action === "export") exportLayout();
-    if (action === "clear" && (placed.length === 0 || window.confirm("Clear every machine from this layout?"))) {
-      placed = [];
+    if (action === "clear" && (activePlaced().length === 0 || window.confirm("Clear every item from this floor?"))) {
+      placed = placed.filter((item) => (item.floorId || "floor-1") !== activeFloorId);
       selectedId = "";
+      selectedIds = new Set();
       pushHistory();
       renderAll();
     }
@@ -885,10 +1188,12 @@
       const copy = { ...item, id: uid(), x: item.x + 1, y: item.y + 1 };
       placed.push(copy);
       selectedId = copy.id;
+      selectedIds = new Set([copy.id]);
     }
     if (action === "delete") {
       placed = placed.filter((placedItem) => placedItem.id !== item.id);
       selectedId = "";
+      selectedIds.delete(item.id);
     }
     pushHistory();
     renderAll();
@@ -904,6 +1209,7 @@
     if (hit) {
       event.preventDefault();
       selectedId = hit.id;
+      selectedIds = new Set([hit.id]);
       const item = getSelected();
       const centerX = item.x + getOrientedSize(item).length / 2;
       const centerY = item.y + getOrientedSize(item).width / 2;
@@ -983,6 +1289,8 @@
   if (loadSavedLayout()) {
     setupCard.classList.add("has-saved-layout");
   }
+  $("#layout-upload-status").textContent = underlay ? underlay.name : "PNG, JPG, SVG, PDF or DXF";
+  $("#layout-remove-underlay").hidden = !underlay;
   pushHistory();
   setView("2d");
   renderAll();
